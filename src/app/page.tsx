@@ -6,33 +6,52 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const FlowerLogo = () => (
   <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M50 20C55 35 65 45 80 50C65 55 55 65 50 80C45 65 35 55 20 50C35 45 45 35 50 20Z" fill="currentColor" />
-    <circle cx="50" cy="50" r="10" fill="currentColor" />
+    <g fill="#0071e3">
+      <circle cx="50" cy="22" r="16" opacity="0.9" />
+      <circle cx="70" cy="30" r="16" opacity="0.9" />
+      <circle cx="78" cy="50" r="16" opacity="0.9" />
+      <circle cx="70" cy="70" r="16" opacity="0.9" />
+      <circle cx="50" cy="78" r="16" opacity="0.9" />
+      <circle cx="30" cy="70" r="16" opacity="0.9" />
+      <circle cx="22" cy="50" r="16" opacity="0.9" />
+      <circle cx="30" cy="30" r="16" opacity="0.9" />
+    </g>
+    <circle cx="50" cy="50" r="14" fill="#ffffff" />
+    <circle cx="50" cy="50" r="8" fill="#0071e3" />
   </svg>
 );
 
-const PeopleCarousel = () => {
-  const images = [
-    "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
-    "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80",
-    "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80",
-    "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=200&q=80",
-    "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=200&q=80",
-    "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80",
-    "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=200&q=80",
-    "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80",
+const CompanyCarousel = () => {
+  const companies = [
+    { name: "Acme Corp", employees: "1,200+ employees", logo: "🏢", color: "from-blue-500 to-indigo-600" },
+    { name: "Stripe Logistics", employees: "4,500+ employees", logo: "💳", color: "from-[#635BFF] to-[#00D4B2]" },
+    { name: "Linear Studio", employees: "350+ employees", logo: "📐", color: "from-purple-500 to-pink-500" },
+    { name: "Vercel Labs", employees: "800+ employees", logo: "▲", color: "from-[#000000] to-[#333336]" },
+    { name: "OpenAI Systems", employees: "2,000+ employees", logo: "🧠", color: "from-[#10a37f] to-emerald-600" },
+    { name: "Figma Creative", employees: "1,500+ employees", logo: "🎨", color: "from-[#F24E1E] to-[#A259FF]" },
+    { name: "Notion HR", employees: "950+ employees", logo: "📝", color: "from-stone-700 to-stone-900" },
+    { name: "Shopify Global", employees: "10,000+ employees", logo: "🛍️", color: "from-[#96bf48] to-green-700" },
   ];
 
   return (
-    <div className="overflow-hidden whitespace-nowrap py-4 group flex">
-       {/* Marquee effect wrapper */}
-       <div className="inline-block animate-[marquee_20s_linear_infinite] group-hover:[animation-play-state:paused] flex gap-4 pr-4">
-         {images.concat(images).map((src, i) => (
-           <div key={i} className="w-16 h-16 md:w-20 md:h-20 flex-shrink-0 rounded-full overflow-hidden border-2 border-white shadow-md">
-             <img src={src} alt="Person" className="w-full h-full object-cover" />
-           </div>
-         ))}
-       </div>
+    <div className="overflow-hidden whitespace-nowrap py-4 group flex relative">
+      {/* Marquee effect wrapper */}
+      <div className="inline-block animate-[marquee_25s_linear_infinite] group-hover:[animation-play-state:paused] flex gap-4 pr-4">
+        {companies.concat(companies).map((c, i) => (
+          <div 
+            key={i} 
+            className="w-56 h-20 flex-shrink-0 rounded-2xl bg-white/90 backdrop-blur-md border border-black/5 p-4 shadow-sm hover:shadow-md hover:border-black/10 transition-all flex items-center gap-3.5"
+          >
+            <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${c.color} text-white flex items-center justify-center text-lg font-bold shadow-sm`}>
+              {c.logo}
+            </div>
+            <div className="text-left overflow-hidden">
+              <div className="font-bold text-sm text-[#1d1d1f] tracking-tight truncate">{c.name}</div>
+              <div className="text-[11px] font-semibold text-[#86868b] tracking-wide mt-0.5">{c.employees}</div>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
@@ -108,7 +127,6 @@ export default function Home() {
                 )}
               </AnimatePresence>
             </div>
-            <Link href="#pricing" className="hover:text-[#0071e3] transition-colors font-medium py-4">Pricing</Link>
           </div>
           <div className="flex items-center gap-4">
             <Link href="/auth" className="text-sm font-medium hover:text-[#0071e3] transition-colors">Sign In</Link>
@@ -130,7 +148,7 @@ export default function Home() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
             </span>
-            <span className="text-sm font-semibold text-blue-700">Dayflow 2.0 is now available</span>
+            <span className="text-sm font-semibold text-blue-700">Work. Better. Together.</span>
           </motion.div>
 
           <motion.h1 
@@ -163,15 +181,15 @@ export default function Home() {
             </Link>
           </motion.div>
 
-          {/* People Carousel */}
+          {/* Company Logos Carousel */}
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 1 }}
-            className="mt-20 max-w-4xl mx-auto"
+            className="mt-20 max-w-5xl mx-auto"
           >
-            <p className="text-sm font-semibold text-[#86868b] uppercase tracking-widest mb-6">Built for teams of all sizes</p>
-            <PeopleCarousel />
+            <p className="text-xs font-bold text-[#86868b] uppercase tracking-widest mb-6">Trusted by modern teams & enterprises</p>
+            <CompanyCarousel />
           </motion.div>
         </section>
 
@@ -401,10 +419,9 @@ export default function Home() {
           <div>
             <h4 className="font-bold mb-4">Product</h4>
             <ul className="space-y-2 text-[#86868b]">
-              <li><Link href="#" className="hover:text-[#0071e3]">Features</Link></li>
-              <li><Link href="#" className="hover:text-[#0071e3]">Integrations</Link></li>
-              <li><Link href="#" className="hover:text-[#0071e3]">Pricing</Link></li>
-              <li><Link href="#" className="hover:text-[#0071e3]">Changelog</Link></li>
+              <li><Link href="#features" className="hover:text-[#0071e3]">Features</Link></li>
+              <li><Link href="#integrations" className="hover:text-[#0071e3]">Integrations</Link></li>
+              <li><Link href="#workflows" className="hover:text-[#0071e3]">Workflows</Link></li>
             </ul>
           </div>
           <div>

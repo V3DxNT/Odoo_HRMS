@@ -7,8 +7,18 @@ import { mockEmployeeAttendance, AttendanceRecord } from '@/lib/dashboardMock';
 
 const FlowerLogo = () => (
   <svg width="24" height="24" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M50 20C55 35 65 45 80 50C65 55 55 65 50 80C45 65 35 55 20 50C35 45 45 35 50 20Z" fill="currentColor" />
-    <circle cx="50" cy="50" r="10" fill="currentColor" />
+    <g fill="#0071e3">
+      <circle cx="50" cy="22" r="16" opacity="0.9" />
+      <circle cx="70" cy="30" r="16" opacity="0.9" />
+      <circle cx="78" cy="50" r="16" opacity="0.9" />
+      <circle cx="70" cy="70" r="16" opacity="0.9" />
+      <circle cx="50" cy="78" r="16" opacity="0.9" />
+      <circle cx="30" cy="70" r="16" opacity="0.9" />
+      <circle cx="22" cy="50" r="16" opacity="0.9" />
+      <circle cx="30" cy="30" r="16" opacity="0.9" />
+    </g>
+    <circle cx="50" cy="50" r="14" fill="#ffffff" />
+    <circle cx="50" cy="50" r="8" fill="#0071e3" />
   </svg>
 );
 
@@ -121,7 +131,11 @@ export default function EmployeeDashboard() {
             Switch to Admin View ↗
           </button>
           
-          <div className="flex items-center gap-3 border-l border-black/10 pl-4">
+          <div 
+            onClick={() => router.push('/profile')}
+            className="flex items-center gap-3 border-l border-black/10 pl-4 cursor-pointer hover:opacity-80 transition-opacity"
+            title="View Profile"
+          >
             <img 
               src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80" 
               alt="Employee Avatar" 

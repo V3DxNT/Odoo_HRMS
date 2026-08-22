@@ -7,8 +7,18 @@ import { initialLeaveRequests, adminMetrics, LeaveRequest } from '@/lib/dashboar
 
 const FlowerLogo = () => (
   <svg width="24" height="24" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M50 20C55 35 65 45 80 50C65 55 55 65 50 80C45 65 35 55 20 50C35 45 45 35 50 20Z" fill="currentColor" />
-    <circle cx="50" cy="50" r="10" fill="currentColor" />
+    <g fill="#0071e3">
+      <circle cx="50" cy="22" r="16" opacity="0.9" />
+      <circle cx="70" cy="30" r="16" opacity="0.9" />
+      <circle cx="78" cy="50" r="16" opacity="0.9" />
+      <circle cx="70" cy="70" r="16" opacity="0.9" />
+      <circle cx="50" cy="78" r="16" opacity="0.9" />
+      <circle cx="30" cy="70" r="16" opacity="0.9" />
+      <circle cx="22" cy="50" r="16" opacity="0.9" />
+      <circle cx="30" cy="30" r="16" opacity="0.9" />
+    </g>
+    <circle cx="50" cy="50" r="14" fill="#ffffff" />
+    <circle cx="50" cy="50" r="8" fill="#0071e3" />
   </svg>
 );
 
@@ -65,13 +75,24 @@ export default function AdminDashboard() {
 
         <div className="flex items-center gap-4">
           <button 
+            onClick={() => alert("Report Export generated: dayflow_payroll_attendance_summary.csv downloaded")}
+            className="hidden sm:block px-3 py-1.5 text-xs font-semibold rounded-lg bg-green-50 text-green-700 hover:bg-green-100 transition-colors"
+          >
+            📥 Export Report (CSV)
+          </button>
+          
+          <button 
             onClick={() => router.push('/employee')}
             className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#f5f5f7] hover:bg-[#e8e8ed] transition-colors text-[#1d1d1f]"
           >
             Switch to Employee View ↗
           </button>
           
-          <div className="flex items-center gap-3 border-l border-black/10 pl-4">
+          <div 
+            onClick={() => router.push('/profile')}
+            className="flex items-center gap-3 border-l border-black/10 pl-4 cursor-pointer hover:opacity-80 transition-opacity"
+            title="View Profile"
+          >
             <img 
               src="https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&q=80" 
               alt="Admin Avatar" 
