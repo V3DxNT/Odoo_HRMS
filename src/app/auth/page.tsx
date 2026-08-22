@@ -26,6 +26,7 @@ export default function AuthPage() {
   const [mounted, setMounted] = useState(false);
   const [email, setEmail] = useState('admin@company.com');
   const [password, setPassword] = useState('password123');
+  const [registerRole, setRegisterRole] = useState<'HR' | 'EMPLOYEE' | 'ADMIN'>('HR');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   
@@ -86,44 +87,93 @@ export default function AuthPage() {
         <span className="font-semibold tracking-tight">Dayflow</span>
       </Link>
 
-      <div className="relative w-full max-w-5xl h-[700px] bg-white rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.08)] border border-black/5 overflow-hidden flex">
+      <div className="relative w-full max-w-5xl h-[720px] bg-white rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.08)] border border-black/5 overflow-hidden flex">
         
         {/* Register Container (Left) */}
         <div className={`absolute top-0 left-0 h-full w-1/2 flex flex-col justify-center px-12 transition-all duration-700 ease-in-out ${isLogin ? 'opacity-0 z-10 translate-x-10 pointer-events-none' : 'opacity-100 z-20 translate-x-0'}`}>
           <h2 className="text-4xl font-bold tracking-tight text-[#1d1d1f] mb-2">Create Workspace.</h2>
-          <p className="text-[#86868b] mb-10 text-lg">Sign up to modernize your HR operations.</p>
+          <p className="text-[#86868b] mb-6 text-base">Sign up to modernize your HR operations.</p>
           
-          <div className="space-y-5">
-            <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-medium text-[#1d1d1f] mb-1.5">First Name</label>
-                <input type="text" required className="w-full px-4 py-3 bg-[#f5f5f7] border border-transparent rounded-xl focus:outline-none focus:bg-white focus:border-[#0071e3] transition-all" />
+                <label className="block text-xs font-bold uppercase tracking-wider text-[#86868b] mb-1">First Name</label>
+                <input type="text" required className="w-full px-4 py-2.5 bg-[#f5f5f7] border border-transparent rounded-xl focus:outline-none focus:bg-white focus:border-[#0071e3] transition-all text-sm" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-[#1d1d1f] mb-1.5">Last Name</label>
-                <input type="text" required className="w-full px-4 py-3 bg-[#f5f5f7] border border-transparent rounded-xl focus:outline-none focus:bg-white focus:border-[#0071e3] transition-all" />
+                <label className="block text-xs font-bold uppercase tracking-wider text-[#86868b] mb-1">Last Name</label>
+                <input type="text" required className="w-full px-4 py-2.5 bg-[#f5f5f7] border border-transparent rounded-xl focus:outline-none focus:bg-white focus:border-[#0071e3] transition-all text-sm" />
               </div>
             </div>
+
             <div>
-              <label className="block text-sm font-medium text-[#1d1d1f] mb-1.5">Work Email</label>
-              <input type="email" required className="w-full px-4 py-3 bg-[#f5f5f7] border border-transparent rounded-xl focus:outline-none focus:bg-white focus:border-[#0071e3] transition-all" placeholder="name@company.com" />
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#86868b] mb-1">Work Email</label>
+              <input type="email" required className="w-full px-4 py-2.5 bg-[#f5f5f7] border border-transparent rounded-xl focus:outline-none focus:bg-white focus:border-[#0071e3] transition-all text-sm" placeholder="name@company.com" />
             </div>
+
+            {/* Select Role Option: HR, Employee, or Admin */}
             <div>
-              <label className="block text-sm font-medium text-[#1d1d1f] mb-1.5">Password</label>
-              <input type="password" required className="w-full px-4 py-3 bg-[#f5f5f7] border border-transparent rounded-xl focus:outline-none focus:bg-white focus:border-[#0071e3] transition-all" placeholder="••••••••" />
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#86868b] mb-1.5">
+                Select Account Role
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setRegisterRole('HR')}
+                  className={`py-2.5 px-2 rounded-xl border text-xs font-bold transition-all flex items-center justify-center gap-1 ${
+                    registerRole === 'HR'
+                      ? 'bg-[#0071e3] text-white border-[#0071e3] shadow-md'
+                      : 'bg-[#f5f5f7] text-[#1d1d1f] border-black/5 hover:bg-gray-200'
+                  }`}
+                >
+                  🏢 HR
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setRegisterRole('EMPLOYEE')}
+                  className={`py-2.5 px-2 rounded-xl border text-xs font-bold transition-all flex items-center justify-center gap-1 ${
+                    registerRole === 'EMPLOYEE'
+                      ? 'bg-[#0071e3] text-white border-[#0071e3] shadow-md'
+                      : 'bg-[#f5f5f7] text-[#1d1d1f] border-black/5 hover:bg-gray-200'
+                  }`}
+                >
+                  👤 Employee
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setRegisterRole('ADMIN')}
+                  className={`py-2.5 px-2 rounded-xl border text-xs font-bold transition-all flex items-center justify-center gap-1 ${
+                    registerRole === 'ADMIN'
+                      ? 'bg-[#0071e3] text-white border-[#0071e3] shadow-md'
+                      : 'bg-[#f5f5f7] text-[#1d1d1f] border-black/5 hover:bg-gray-200'
+                  }`}
+                >
+                  🔑 Admin
+                </button>
+              </div>
             </div>
+
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#86868b] mb-1">Password</label>
+              <input type="password" required className="w-full px-4 py-2.5 bg-[#f5f5f7] border border-transparent rounded-xl focus:outline-none focus:bg-white focus:border-[#0071e3] transition-all text-sm" placeholder="••••••••" />
+            </div>
+
             <button 
               type="button" 
               onClick={() => {
-                window.location.href = '/onboarding';
+                if (registerRole === 'EMPLOYEE') {
+                  window.location.href = '/employee';
+                } else {
+                  window.location.href = `/onboarding?role=${registerRole}`;
+                }
               }}
-              className="w-full mt-4 py-3.5 rounded-xl bg-[#0071e3] text-white font-medium text-lg hover:bg-[#0077ED] transition-colors shadow-[0_4px_12px_rgba(0,113,227,0.3)]"
+              className="w-full mt-2 py-3.5 rounded-xl bg-[#0071e3] text-white font-semibold text-base hover:bg-[#0077ED] transition-colors shadow-[0_4px_12px_rgba(0,113,227,0.3)]"
             >
-              Create Account & Onboard
+              Create Account as {registerRole === 'HR' ? 'HR Manager' : registerRole === 'EMPLOYEE' ? 'Employee' : 'Admin'}
             </button>
           </div>
           
-          <div className="mt-8 text-center md:hidden">
+          <div className="mt-6 text-center md:hidden">
             <p className="text-[#86868b]">Already have an account? <button onClick={() => setIsLogin(true)} className="text-[#0071e3] font-medium">Sign in</button></p>
           </div>
         </div>
