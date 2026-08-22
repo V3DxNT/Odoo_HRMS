@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, FormEvent } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -14,6 +15,9 @@ const FlowerLogo = () => (
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [mounted, setMounted] = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
   
   useEffect(() => {
     setMounted(true);
@@ -24,6 +28,41 @@ export default function AuthPage() {
       }
     }
   }, []);
+
+  const handleSignIn = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+
+    try {
+      const res = await fetch('/api/auth/sign-in', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || 'Failed to sign in');
+      } else {
+        // Redirect based on role
+        if (data.user.role === 'ADMIN') {
+          router.push('/admin');
+        } else {
+          router.push('/employee');
+        }
+      }
+    } catch (err) {
+      setError('An error occurred. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (!mounted) return null;
 
@@ -76,22 +115,28 @@ export default function AuthPage() {
           <h2 className="text-4xl font-bold tracking-tight text-[#1d1d1f] mb-2">Welcome back.</h2>
           <p className="text-[#86868b] mb-10 text-lg">Enter your details to sign in to your account.</p>
           
-          <div className="space-y-5">
+          {error && (
+            <div className="mb-6 p-4 rounded-xl bg-red-50 text-red-600 text-sm font-medium border border-red-100">
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSignIn} className="space-y-5">
             <div>
               <label className="block text-sm font-medium text-[#1d1d1f] mb-1.5">Email address</label>
-              <input type="email" required className="w-full px-4 py-3 bg-[#f5f5f7] border border-transparent rounded-xl focus:outline-none focus:bg-white focus:border-[#0071e3] transition-all" placeholder="name@company.com" />
+              <input name="email" type="email" required defaultValue="admin@company.com" className="w-full px-4 py-3 bg-[#f5f5f7] border border-transparent rounded-xl focus:outline-none focus:bg-white focus:border-[#0071e3] transition-all" placeholder="name@company.com" />
             </div>
             <div>
               <div className="flex justify-between items-center mb-1.5">
                  <label className="block text-sm font-medium text-[#1d1d1f]">Password</label>
                  <Link href="#" className="text-xs font-medium text-[#0071e3] hover:underline">Forgot password?</Link>
               </div>
-              <input type="password" required className="w-full px-4 py-3 bg-[#f5f5f7] border border-transparent rounded-xl focus:outline-none focus:bg-white focus:border-[#0071e3] transition-all" placeholder="••••••••" />
+              <input name="password" type="password" required defaultValue="password123" className="w-full px-4 py-3 bg-[#f5f5f7] border border-transparent rounded-xl focus:outline-none focus:bg-white focus:border-[#0071e3] transition-all" placeholder="••••••••" />
             </div>
-            <button type="button" className="w-full mt-4 py-3.5 rounded-xl bg-[#0071e3] text-white font-medium text-lg hover:bg-[#0077ED] transition-colors shadow-[0_4px_12px_rgba(0,113,227,0.3)]">
-              Sign In
+            <button disabled={loading} type="submit" className="w-full mt-4 py-3.5 rounded-xl bg-[#0071e3] text-white font-medium text-lg hover:bg-[#0077ED] transition-colors shadow-[0_4px_12px_rgba(0,113,227,0.3)] disabled:opacity-50">
+              {loading ? 'Signing In...' : 'Sign In'}
             </button>
-          </div>
+          </form>
           
           <div className="mt-8 text-center md:hidden">
             <p className="text-[#86868b]">Don't have an account? <button onClick={() => setIsLogin(false)} className="text-[#0071e3] font-medium">Register</button></p>

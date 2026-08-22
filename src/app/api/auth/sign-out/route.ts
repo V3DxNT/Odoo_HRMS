@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
-import { clearAuthCookie } from '@/lib/auth/cookies';
 
 export async function POST() {
-  clearAuthCookie();
-  return NextResponse.json({ success: true });
+  const response = NextResponse.json({ success: true }, { status: 200 });
+
+  // Clear the session cookie
+  response.cookies.delete('dayflow_session');
+
+  return response;
 }
