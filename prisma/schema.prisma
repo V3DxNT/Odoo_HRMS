@@ -1,0 +1,179 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum Role {
+  ADMIN
+  EMPLOYEE
+}
+
+enum UserStatus {
+  INVITED
+  ACTIVE
+  SUSPENDED
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  HALF_DAY
+  LEAVE
+}
+
+enum LeaveType {
+  PAID
+  SICK
+  UNPAID
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// ─── Models ───────────────────────────────────────────────────────────────────
+
+model User {
+  id            String     @id @default(cuid())
+  employeeId    String     @unique
+  email         String     @unique
+  passwordHash  String
+  role          Role       @default(EMPLOYEE)
+  status        UserStatus @default(INVITED)
+  emailVerified Boolean    @default(false)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  profile       Profile?
+  attendance    Attendance[]
+  leaveRequests LeaveRequest[]
+  payroll       Payroll?
+  refreshTokens RefreshToken[]
+  documents     Document[]
+  notifications Notification[]
+  auditLogs     AuditLog[]     @relation("ActorLogs")
+}
+
+model Profile {
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName        String
+  phone           String?
+  address         String?
+  department      String?
+  designation     String?
+  dateOfBirth     DateTime?
+  dateOfJoining   DateTime?
+  profileImageUrl String?
+  updatedAt       DateTime  @updatedAt
+}
+
+model Attendance {
+  id        String           @id @default(cuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date      DateTime         @db.Date
+  checkIn   DateTime?
+  checkOut  DateTime?
+  status    AttendanceStatus @default(PRESENT)
+  workHours Float            @default(0)
+  createdAt DateTime         @default(now())
+
+  @@unique([userId, date])
+}
+
+model LeaveRequest {
+  id            String      @id @default(cuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type          LeaveType
+  startDate     DateTime    @db.Date
+  endDate       DateTime    @db.Date
+  daysCount     Int
+  remarks       String?
+  aiSummary     String?
+  status        LeaveStatus @default(PENDING)
+  reviewedBy    String?
+  reviewComment String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model Payroll {
+  id            String           @id @default(cuid())
+  userId        String           @unique
+  user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  baseSalary    Decimal          @db.Decimal(12, 2)
+  allowances    Decimal          @default(0) @db.Decimal(12, 2)
+  deductions    Decimal          @default(0) @db.Decimal(12, 2)
+  currency      String           @default("INR")
+  effectiveFrom DateTime
+  updatedAt     DateTime         @updatedAt
+  history       PayrollHistory[]
+}
+
+model PayrollHistory {
+  id        String   @id @default(cuid())
+  payrollId String
+  payroll   Payroll  @relation(fields: [payrollId], references: [id], onDelete: Cascade)
+  snapshot  Json
+  changedBy String
+  changedAt DateTime @default(now())
+}
+
+model Document {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type       String
+  name       String
+  url        String
+  uploadedAt DateTime @default(now())
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String
+  expiresAt DateTime
+  revoked   Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  read      Boolean  @default(false)
+  type      String   @default("INFO")
+  createdAt DateTime @default(now())
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String
+  actor      User     @relation("ActorLogs", fields: [actorId], references: [id], onDelete: Cascade)
+  action     String
+  entityType String
+  entityId   String
+  details    String?
+  before     Json?
+  after      Json?
+  createdAt  DateTime @default(now())
+}
