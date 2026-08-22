@@ -1,0 +1,124 @@
+'use client';
+
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import {
+  LayoutDashboard,
+  UserCheck,
+  CalendarCheck,
+  CalendarDays,
+  FileSpreadsheet,
+  Users,
+  CheckSquare,
+  BarChart3,
+  LogOut,
+  Sparkles,
+} from 'lucide-react';
+
+interface SidebarProps {
+  role: 'ADMIN' | 'EMPLOYEE';
+  onOpenAi: () => void;
+}
+
+export function Sidebar({ role, onOpenAi }: SidebarProps) {
+  const pathname = usePathname();
+
+  const employeeNav = [
+    { label: 'Dashboard', href: '/employee', icon: LayoutDashboard },
+    { label: 'My Profile', href: '/employee/profile', icon: UserCheck },
+    { label: 'Attendance', href: '/employee/attendance', icon: CalendarCheck },
+    { label: 'Time Off / Leave', href: '/employee/leave', icon: CalendarDays },
+    { label: 'Payslips', href: '/employee/payslips', icon: FileSpreadsheet },
+  ];
+
+  const adminNav = [
+    { label: 'Overview', href: '/admin', icon: LayoutDashboard },
+    { label: 'Employee Directory', href: '/admin/employees', icon: Users },
+    { label: 'Company Attendance', href: '/admin/attendance', icon: CalendarCheck },
+    { label: 'Leave Approvals', href: '/admin/leave-approvals', icon: CheckSquare },
+    { label: 'Payroll & Compensation', href: '/admin/payroll', icon: FileSpreadsheet },
+    { label: 'Reports & Analytics', href: '/admin/reports', icon: BarChart3 },
+  ];
+
+  const navItems = role === 'ADMIN' ? adminNav : employeeNav;
+
+  const handleLogout = async () => {
+    await fetch('/api/auth/sign-out', { method: 'POST' });
+    window.location.href = '/sign-in';
+  };
+
+  return (
+    <aside className="w-64 bg-white border-r border-borderSubtle flex flex-col h-screen sticky top-0 shrink-0 select-none">
+      {/* Brand Header */}
+      <div className="p-5 border-b border-borderSubtle flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-2.5 group">
+          <div className="w-8 h-8 rounded-lg bg-accent text-white font-black text-lg flex items-center justify-center tracking-tighter shadow-sm group-hover:bg-accentHover transition-colors">
+            D
+          </div>
+          <div>
+            <span className="text-base font-bold text-textPrimary tracking-tight">Dayflow</span>
+            <span className="text-[10px] block text-textMuted font-mono uppercase tracking-widest">HR System</span>
+          </div>
+        </Link>
+        <span className="text-[10px] font-semibold bg-stone-100 text-stone-600 px-2 py-0.5 rounded-full border border-stone-200 uppercase">
+          {role}
+        </span>
+      </div>
+
+      {/* AI Assistant Quick Launcher */}
+      <div className="p-3 mx-3 my-3 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-xl">
+        <button
+          onClick={onOpenAi}
+          className="w-full flex items-center gap-2.5 text-left text-xs font-semibold text-accent hover:text-accentHover transition-colors"
+        >
+          <div className="w-6 h-6 rounded-full bg-accent text-white flex items-center justify-center shadow-xs">
+            <Sparkles className="w-3.5 h-3.5" />
+          </div>
+          <div className="flex-1">
+            <div className="text-textPrimary text-xs font-semibold flex items-center gap-1">
+              Ask Dayflow AI
+            </div>
+            <p className="text-[10px] text-textMuted font-normal">HR Policy Chatbot</p>
+          </div>
+        </button>
+      </div>
+
+      {/* Main Navigation Links */}
+      <nav className="flex-1 px-3 py-2 space-y-1 overflow-y-auto">
+        <div className="px-3 pb-2 text-[10px] font-semibold text-textMuted uppercase tracking-wider">
+          {role === 'ADMIN' ? 'Administration' : 'Workspace'}
+        </div>
+        {navItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = pathname === item.href;
+
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium transition-all ${
+                isActive
+                  ? 'bg-accent/10 text-accent font-semibold border-l-2 border-accent'
+                  : 'text-textSecondary hover:bg-bgElevated hover:text-textPrimary'
+              }`}
+            >
+              <Icon className={`w-4 h-4 ${isActive ? 'text-accent' : 'text-stone-400'}`} />
+              <span>{item.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
+
+      {/* Footer / Logout */}
+      <div className="p-3 border-t border-borderSubtle">
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-rose-700 hover:bg-rose-50 rounded-lg transition-colors"
+        >
+          <LogOut className="w-4 h-4" />
+          <span>Sign Out</span>
+        </button>
+      </div>
+    </aside>
+  );
+}
