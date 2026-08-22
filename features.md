@@ -1,5 +1,13 @@
-Check the PRD and the Architecture.md files and now it is time to implement the features of the website.
+Remove the Gemini AI feature, 
 
-Make sure that all the required features are implemented, all the buttons and the paths are working fine 
+When a HR or a admin are rejects the employee, there should be a place for the hr to enter the reason for rejection.
 
-Check the function.md file for the complete reference mapping every functional requirement to its user-facing behavior and the exact API call(s) that implement it.
+And also make sure that if a user has his leave rejected, then he is notified for the same with the reason in it
+Increase the size of the Pie chart 
+Keep the payroll div also same as that of others   
+
+In the / page, remove the company logos, and add carousel of people in it in cards.
+
+Increase the display card of the Leave approval workflow
+
+in the / page, there is a 7.5H logged in which is not visible, you can remove and add something else preferably about it so that it matches

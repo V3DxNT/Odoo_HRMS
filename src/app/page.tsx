@@ -82,54 +82,58 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#fbfbfd]" />
       </div>
 
-      {/* Sticky Translucent Navbar */}
-      <nav className="fixed top-0 w-full z-50 glass border-b-0">
-        <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between relative">
-          <Link href="/" className="flex items-center gap-2 text-[#1d1d1f] hover:opacity-80 transition-opacity">
+      {/* Floating Ellipse Gradient Navbar */}
+      <nav className="fixed top-4 left-1/2 -translate-x-1/2 w-[92%] max-w-6xl z-50">
+        <div className="bg-gradient-to-r from-white/95 via-blue-50/80 to-white/95 backdrop-blur-2xl border border-black/10 rounded-full px-8 h-16 flex items-center justify-between shadow-[0_12px_40px_rgba(0,113,227,0.12)] transition-all">
+          <Link href="/" className="flex items-center gap-3 text-[#1d1d1f] hover:opacity-80 transition-opacity">
             <FlowerLogo />
-            <span className="font-semibold text-lg tracking-tight">Dayflow</span>
+            <span className="font-bold text-xl tracking-tight bg-gradient-to-r from-[#1d1d1f] to-[#0071e3] bg-clip-text text-transparent">Dayflow</span>
           </Link>
-          <div className="hidden md:flex items-center gap-8 text-sm">
+          <div className="hidden md:flex items-center gap-10 text-sm">
             <div 
-              className="relative py-4"
+              className="relative py-2"
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
             >
-              <button className="hover:text-[#0071e3] transition-colors flex items-center gap-1 font-medium">
+              <button className="hover:text-[#0071e3] transition-colors flex items-center gap-1.5 font-semibold text-base">
                 Platform
-                <svg width="10" height="6" viewBox="0 0 10 6" fill="none" className={`transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}>
-                  <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <svg width="10" height="6" viewBox="0 0 10 6" fill="none" className={`transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}>
+                  <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </button>
               
               <AnimatePresence>
                 {isDropdownOpen && (
                   <motion.div 
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
+                    initial={{ opacity: 0, y: 12, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 bg-white/90 backdrop-blur-xl border border-black/5 rounded-2xl shadow-xl p-4 flex flex-col gap-2"
+                    className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-64 bg-white/95 backdrop-blur-2xl border border-black/10 rounded-3xl shadow-2xl p-3 flex flex-col gap-1.5"
                   >
-                    <Link href="#features" className="p-2 rounded-xl hover:bg-black/5 transition-colors">
-                      <div className="font-semibold text-[#1d1d1f]">Core Features</div>
-                      <div className="text-xs text-[#86868b]">Attendance, leave, and more</div>
+                    <Link href="#features" className="p-3 rounded-2xl hover:bg-blue-50/70 transition-colors">
+                      <div className="font-bold text-sm text-[#1d1d1f]">Core Features</div>
+                      <div className="text-xs text-[#86868b]">Attendance, leave, and AI</div>
                     </Link>
-                    <Link href="#workflows" className="p-2 rounded-xl hover:bg-black/5 transition-colors">
-                      <div className="font-semibold text-[#1d1d1f]">Workflows</div>
+                    <Link href="#workflows" className="p-3 rounded-2xl hover:bg-blue-50/70 transition-colors">
+                      <div className="font-bold text-sm text-[#1d1d1f]">Workflows</div>
                       <div className="text-xs text-[#86868b]">Visual kanban boards</div>
                     </Link>
-                    <Link href="#integrations" className="p-2 rounded-xl hover:bg-black/5 transition-colors">
-                      <div className="font-semibold text-[#1d1d1f]">Integrations</div>
+                    <Link href="#integrations" className="p-3 rounded-2xl hover:bg-blue-50/70 transition-colors">
+                      <div className="font-bold text-sm text-[#1d1d1f]">Integrations</div>
                       <div className="text-xs text-[#86868b]">Connect with your tools</div>
                     </Link>
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
+            <Link href="#workflows" className="hover:text-[#0071e3] transition-colors font-semibold text-base">Workflows</Link>
+            <Link href="#features" className="hover:text-[#0071e3] transition-colors font-semibold text-base">Features</Link>
           </div>
-          <div className="flex items-center gap-4">
-            <Link href="/auth" className="text-sm font-medium hover:text-[#0071e3] transition-colors">Sign In</Link>
+          <div className="flex items-center gap-3">
+            <Link href="/auth" className="px-6 py-2.5 rounded-full bg-[#0071e3] text-white font-bold text-sm hover:bg-[#0077ED] transition-all shadow-md hover:shadow-blue-500/25">
+              Sign In ➔
+            </Link>
           </div>
         </div>
       </nav>

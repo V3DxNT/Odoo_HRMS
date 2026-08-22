@@ -13,10 +13,15 @@ export async function POST(request: Request) {
     const { message } = await request.json();
     const apiKey = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY;
 
-    if (apiKey) {
+    if (apiKey && apiKey !== 'your_gemini_api_key_here') {
       try {
         const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        let model;
+        try {
+          model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        } catch {
+          model = genAI.getGenerativeModel({ model: "gemini-pro" });
+        }
 
         const prompt = `You are Dayflow AI, an intelligent HR assistant embedded in an HRMS system. Answer the following employee query professionally and concisely (max 3 sentences): "${message}"`;
         
@@ -27,7 +32,7 @@ export async function POST(request: Request) {
           return NextResponse.json({ reply: responseText, source: 'gemini' });
         }
       } catch (geminiError) {
-        console.warn("Gemini API call failed, using intelligent fallback response:", geminiError);
+        console.warn("Gemini API call warning, using intelligent fallback response:", geminiError);
       }
     }
 

@@ -45,15 +45,15 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-[#fbfbfd] text-[#1d1d1f] flex flex-col font-sans">
       
       {/* Top Header */}
-      <header className="sticky top-0 z-40 glass border-b border-black/5 px-6 py-3 flex items-center justify-between">
+      <header className="sticky top-0 z-40 glass border-b border-black/10 px-8 py-5 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-3">
-          <button onClick={() => router.back()} className="text-xs font-bold text-[#0071e3] hover:underline">
+          <button onClick={() => router.back()} className="px-4 py-2 bg-[#f5f5f7] hover:bg-[#e8e8ed] text-xs font-bold text-[#0071e3] rounded-xl border border-black/5 transition-all">
             ← Back to Dashboard
           </button>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <FlowerLogo />
-          <span className="font-bold text-sm">Dayflow Profile</span>
+          <span className="font-extrabold text-xl tracking-tight text-[#1d1d1f]">Dayflow Profile</span>
         </div>
       </header>
 
