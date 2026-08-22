@@ -23,11 +23,23 @@ export default function AdminDashboard() {
     router.push('/auth');
   };
 
-  const handleAction = (id: string, newStatus: 'APPROVED' | 'REJECTED') => {
-    setLeaveRequests(prev => prev.map(req => req.id === id ? { ...req, status: newStatus } : req));
-    const req = leaveRequests.find(r => r.id === id);
-    setActionMessage(`Leave request for ${req?.employeeName} was ${newStatus.toLowerCase()}.`);
-    setTimeout(() => setActionMessage(null), 3000);
+  const handleAction = async (id: string, newStatus: 'APPROVED' | 'REJECTED') => {
+    try {
+      const res = await fetch(`/api/leave/${id}/approve`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ decision: newStatus })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setLeaveRequests(prev => prev.map(req => req.id === id ? { ...req, status: newStatus } : req));
+        const req = leaveRequests.find(r => r.id === id);
+        setActionMessage(`Leave request for ${req?.employeeName} was ${newStatus.toLowerCase()}.`);
+        setTimeout(() => setActionMessage(null), 3000);
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const filteredRequests = filterDept === 'ALL' 

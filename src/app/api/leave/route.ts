@@ -1,70 +1,36 @@
 import { NextResponse } from 'next/server';
-import { getSessionUser } from '@/lib/auth/rbac';
-import { db } from '@/lib/db';
-import { summarizeLeaveRequest } from '@/lib/gemini';
-import { LeaveType } from '@/lib/types';
+import { initialLeaveRequests } from '@/lib/dashboardMock';
 
-export async function GET(req: Request) {
-  try {
-    const session = getSessionUser();
-    if (!session) {
-      return NextResponse.json({ error: { message: 'Unauthorized' } }, { status: 401 });
-    }
+// In-memory store for leave requests
+let leaveStore = [...initialLeaveRequests];
 
-    const { searchParams } = new URL(req.url);
-    const userIdFilter = searchParams.get('userId');
-
-    const targetUserId = session.role === 'EMPLOYEE' ? session.userId : (userIdFilter || undefined);
-    const leaves = db.getLeaves(targetUserId);
-    const balance = db.getLeaveBalance(session.userId);
-
-    return NextResponse.json({ leaves, balance });
-  } catch (error: any) {
-    return NextResponse.json({ error: { message: error.message } }, { status: 500 });
-  }
+export async function GET() {
+  return NextResponse.json({ success: true, leaveRequests: leaveStore });
 }
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   try {
-    const session = getSessionUser();
-    if (!session) {
-      return NextResponse.json({ error: { message: 'Unauthorized' } }, { status: 401 });
-    }
+    const body = await request.json();
+    const { type, startDate, endDate, remarks, employeeName } = body;
 
-    const body = await req.json();
-    const { type, startDate, endDate, remarks } = body;
+    const newRequest = {
+      id: `LV-${Math.floor(100 + Math.random() * 900)}`,
+      employeeName: employeeName || "David Lee",
+      employeeAvatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80",
+      department: "Engineering",
+      type: type || "Vacation",
+      startDate: startDate || new Date().toISOString().split('T')[0],
+      endDate: endDate || new Date().toISOString().split('T')[0],
+      days: 2,
+      reason: remarks || "Personal time off request.",
+      status: "PENDING" as const,
+      submittedAt: "Just now"
+    };
 
-    if (!type || !startDate || !endDate) {
-      return NextResponse.json({ error: { message: 'Type, start date, and end date are required' } }, { status: 400 });
-    }
+    leaveStore.unshift(newRequest);
 
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    const diffTime = Math.abs(end.getTime() - start.getTime());
-    const daysCount = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-
-    const dbUser = db.getUserById(session.userId);
-    const userName = dbUser?.profile?.fullName || session.fullName || session.email;
-    const userDepartment = dbUser?.profile?.department || 'Engineering';
-
-    // Auto-generate AI summary of leave request remarks
-    const aiSummary = await summarizeLeaveRequest(remarks || `${type} leave application`, userName);
-
-    const leave = db.createLeaveRequest({
-      userId: session.userId,
-      userName,
-      userDepartment,
-      userAvatar: dbUser?.profile?.profileImageUrl,
-      type: type as LeaveType,
-      startDate,
-      endDate,
-      daysCount,
-      remarks: remarks || '',
-      aiSummary,
-    });
-
-    return NextResponse.json({ success: true, leave });
-  } catch (error: any) {
-    return NextResponse.json({ error: { message: error.message } }, { status: 500 });
+    return NextResponse.json({ success: true, leaveRequest: newRequest }, { status: 201 });
+  } catch (err) {
+    return NextResponse.json({ error: "Failed to apply for leave" }, { status: 400 });
   }
 }

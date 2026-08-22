@@ -19,29 +19,83 @@ export default function EmployeeDashboard() {
   const [attendanceLogs, setAttendanceLogs] = useState<AttendanceRecord[]>(mockEmployeeAttendance);
   const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
   const [leaveSuccess, setLeaveSuccess] = useState<string | null>(null);
+  
+  // AI Chatbot State
+  const [showChat, setShowChat] = useState<boolean>(false);
+  const [chatMessages, setChatMessages] = useState<Array<{ sender: 'user' | 'ai'; text: string }>>([
+    { sender: 'ai', text: 'Hello David! I am your Gemini HR Assistant. How can I help you with leave balances, policies, or payroll today?' }
+  ]);
+  const [inputMsg, setInputMsg] = useState<string>('');
+  const [chatLoading, setChatLoading] = useState<boolean>(false);
 
   const handleSignOut = async () => {
     await fetch('/api/auth/sign-out', { method: 'POST' });
     router.push('/auth');
   };
 
-  const toggleCheckIn = () => {
+  const toggleCheckIn = async () => {
     if (isCheckedIn) {
-      setIsCheckedIn(false);
-      const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      setAttendanceLogs(prev => prev.map(log => log.date === "Today" ? { ...log, checkOut: now, hoursLogged: 8.0 } : log));
+      const res = await fetch('/api/attendance/check-out', { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        setIsCheckedIn(false);
+        setAttendanceLogs(prev => prev.map(log => log.date === "Today" ? { ...log, checkOut: data.checkOut, hoursLogged: data.hoursLogged } : log));
+      }
     } else {
-      setIsCheckedIn(true);
-      const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      setCheckInTime(now);
+      const res = await fetch('/api/attendance/check-in', { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        setIsCheckedIn(true);
+        setCheckInTime(data.checkIn);
+      }
     }
   };
 
-  const handleApplyLeave = (e: FormEvent<HTMLFormElement>) => {
+  const handleApplyLeave = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setShowLeaveModal(false);
-    setLeaveSuccess("Your leave request has been submitted to Sarah Jenkins for approval!");
-    setTimeout(() => setLeaveSuccess(null), 4000);
+    const formData = new FormData(e.currentTarget);
+    const type = formData.get('type') as string;
+    const startDate = formData.get('startDate') as string;
+    const endDate = formData.get('endDate') as string;
+    const remarks = formData.get('remarks') as string;
+
+    const res = await fetch('/api/leave', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type, startDate, endDate, remarks, employeeName: 'David Lee' })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      setShowLeaveModal(false);
+      setLeaveSuccess("Your leave request has been submitted to Sarah Jenkins for approval!");
+      setTimeout(() => setLeaveSuccess(null), 4000);
+    }
+  };
+
+  const handleSendChat = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!inputMsg.trim()) return;
+
+    const userText = inputMsg;
+    setInputMsg('');
+    setChatMessages(prev => [...prev, { sender: 'user', text: userText }]);
+    setChatLoading(true);
+
+    try {
+      const res = await fetch('/api/ai/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: userText })
+      });
+      const data = await res.json();
+      setChatMessages(prev => [...prev, { sender: 'ai', text: data.reply }]);
+    } catch (err) {
+      setChatMessages(prev => [...prev, { sender: 'ai', text: "I'm currently unable to connect, but your leave balance is 12 days." }]);
+    } finally {
+      setChatLoading(false);
+    }
   };
 
   return (
@@ -247,7 +301,7 @@ export default function EmployeeDashboard() {
               <form onSubmit={handleApplyLeave} className="space-y-4">
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-[#86868b] mb-1.5">Leave Type</label>
-                  <select required className="w-full px-4 py-3 bg-[#f5f5f7] border border-transparent rounded-xl focus:bg-white focus:border-[#0071e3] transition-all">
+                  <select name="type" required className="w-full px-4 py-3 bg-[#f5f5f7] border border-transparent rounded-xl focus:bg-white focus:border-[#0071e3] transition-all">
                     <option value="Vacation">Vacation Leave</option>
                     <option value="Sick">Sick Leave</option>
                     <option value="Personal">Personal Leave</option>
@@ -257,17 +311,17 @@ export default function EmployeeDashboard() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-[#86868b] mb-1.5">Start Date</label>
-                    <input type="date" required className="w-full px-4 py-3 bg-[#f5f5f7] border border-transparent rounded-xl focus:bg-white focus:border-[#0071e3] transition-all" />
+                    <input name="startDate" type="date" required className="w-full px-4 py-3 bg-[#f5f5f7] border border-transparent rounded-xl focus:bg-[#0071e3] transition-all" />
                   </div>
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-[#86868b] mb-1.5">End Date</label>
-                    <input type="date" required className="w-full px-4 py-3 bg-[#f5f5f7] border border-transparent rounded-xl focus:bg-white focus:border-[#0071e3] transition-all" />
+                    <input name="endDate" type="date" required className="w-full px-4 py-3 bg-[#f5f5f7] border border-transparent rounded-xl focus:bg-[#0071e3] transition-all" />
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-[#86868b] mb-1.5">Reason / Remarks</label>
-                  <textarea rows={3} required placeholder="Briefly describe why you are requesting leave..." className="w-full px-4 py-3 bg-[#f5f5f7] border border-transparent rounded-xl focus:bg-white focus:border-[#0071e3] transition-all" />
+                  <textarea name="remarks" rows={3} required placeholder="Briefly describe why you are requesting leave..." className="w-full px-4 py-3 bg-[#f5f5f7] border border-transparent rounded-xl focus:bg-white focus:border-[#0071e3] transition-all" />
                 </div>
 
                 <div className="pt-2 flex justify-end gap-3">
@@ -279,6 +333,76 @@ export default function EmployeeDashboard() {
           </div>
         )}
       </AnimatePresence>
+
+      {/* Floating Gemini AI HR Chatbot Assistant */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <AnimatePresence>
+          {showChat && (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="mb-4 w-80 sm:w-96 bg-white rounded-3xl shadow-2xl border border-black/10 overflow-hidden flex flex-col h-[450px]"
+            >
+              {/* Chat Header */}
+              <div className="bg-[#1d1d1f] text-white p-4 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="w-8 h-8 rounded-full bg-[#0071e3] flex items-center justify-center text-sm">✨</span>
+                  <div>
+                    <div className="font-bold text-sm leading-tight">Gemini HR Assistant</div>
+                    <div className="text-[10px] text-blue-300">Powered by Gemini AI</div>
+                  </div>
+                </div>
+                <button onClick={() => setShowChat(false)} className="text-white/60 hover:text-white font-bold text-lg">✕</button>
+              </div>
+
+              {/* Chat Messages Body */}
+              <div className="flex-1 p-4 overflow-y-auto space-y-3 bg-[#fbfbfd]">
+                {chatMessages.map((msg, i) => (
+                  <div key={i} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`max-w-[85%] p-3 rounded-2xl text-xs leading-relaxed ${
+                      msg.sender === 'user' 
+                        ? 'bg-[#0071e3] text-white rounded-br-none' 
+                        : 'bg-white text-[#1d1d1f] border border-black/5 shadow-sm rounded-bl-none font-medium'
+                    }`}>
+                      {msg.text}
+                    </div>
+                  </div>
+                ))}
+                {chatLoading && (
+                  <div className="flex justify-start">
+                    <div className="bg-white p-3 rounded-2xl border border-black/5 text-xs text-[#86868b] animate-pulse">
+                      Gemini is thinking...
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Chat Form Input */}
+              <form onSubmit={handleSendChat} className="p-3 bg-white border-t border-black/5 flex gap-2">
+                <input 
+                  type="text" 
+                  value={inputMsg}
+                  onChange={(e) => setInputMsg(e.target.value)}
+                  placeholder="Ask policy, leave, or payroll..."
+                  className="flex-1 px-3 py-2 bg-[#f5f5f7] rounded-xl text-xs focus:outline-none focus:bg-white border border-transparent focus:border-[#0071e3]"
+                />
+                <button type="submit" className="px-3 py-2 bg-[#0071e3] text-white rounded-xl text-xs font-bold hover:bg-[#0077ED]">
+                  Send
+                </button>
+              </form>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <button 
+          onClick={() => setShowChat(!showChat)}
+          className="w-14 h-14 rounded-full bg-[#1d1d1f] text-white flex items-center justify-center text-xl shadow-2xl hover:scale-105 transition-all border-2 border-white/20"
+          title="Open Gemini HR Assistant"
+        >
+          ✨
+        </button>
+      </div>
 
     </div>
   );

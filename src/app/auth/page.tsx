@@ -121,6 +121,55 @@ export default function AuthPage() {
             </div>
           )}
 
+          {/* Quick Demo Selectors */}
+          <div className="mb-6 p-3 bg-[#f5f5f7] rounded-xl border border-black/5">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#86868b] block mb-2">⚡ Quick Presentation Login:</span>
+            <div className="flex gap-2">
+              <button 
+                type="button"
+                onClick={() => {
+                  const emailInput = document.querySelector<HTMLInputElement>('input[name="email"]');
+                  const passInput = document.querySelector<HTMLInputElement>('input[name="password"]');
+                  if (emailInput && passInput) {
+                    emailInput.value = 'admin@company.com';
+                    passInput.value = 'password123';
+                  }
+                }}
+                className="flex-1 py-1.5 px-2 bg-white text-xs font-semibold rounded-lg shadow-sm hover:bg-blue-50 hover:text-[#0071e3] transition-colors"
+              >
+                🔑 Admin
+              </button>
+              <button 
+                type="button"
+                onClick={() => {
+                  const emailInput = document.querySelector<HTMLInputElement>('input[name="email"]');
+                  const passInput = document.querySelector<HTMLInputElement>('input[name="password"]');
+                  if (emailInput && passInput) {
+                    emailInput.value = 'hr@company.com';
+                    passInput.value = 'password123';
+                  }
+                }}
+                className="flex-1 py-1.5 px-2 bg-white text-xs font-semibold rounded-lg shadow-sm hover:bg-blue-50 hover:text-[#0071e3] transition-colors"
+              >
+                🏢 HR Manager
+              </button>
+              <button 
+                type="button"
+                onClick={() => {
+                  const emailInput = document.querySelector<HTMLInputElement>('input[name="email"]');
+                  const passInput = document.querySelector<HTMLInputElement>('input[name="password"]');
+                  if (emailInput && passInput) {
+                    emailInput.value = 'employee@company.com';
+                    passInput.value = 'password123';
+                  }
+                }}
+                className="flex-1 py-1.5 px-2 bg-white text-xs font-semibold rounded-lg shadow-sm hover:bg-blue-50 hover:text-[#0071e3] transition-colors"
+              >
+                👤 Employee
+              </button>
+            </div>
+          </div>
+
           <form onSubmit={handleSignIn} className="space-y-5">
             <div>
               <label className="block text-sm font-medium text-[#1d1d1f] mb-1.5">Email address</label>

@@ -4,11 +4,22 @@ export const mockUsers = [
     firstName: "Sarah",
     lastName: "Jenkins",
     email: "admin@company.com",
-    password: "password123", // mocked plaintext for demo
+    password: "password123",
     role: "ADMIN",
     department: "HR",
-    designation: "Head of People",
+    designation: "HR Director & Administrator",
     avatar: "https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&q=80"
+  },
+  {
+    id: "user_hr_1",
+    firstName: "Elena",
+    lastName: "Rodriguez",
+    email: "hr@company.com",
+    password: "password123",
+    role: "ADMIN",
+    department: "HR",
+    designation: "HR Manager",
+    avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=100&q=80"
   },
   {
     id: "user_emp_1",
@@ -23,7 +34,6 @@ export const mockUsers = [
   }
 ];
 
-// Helper to encode mock JWT
 export function createMockToken(payload: any) {
   if (typeof window === 'undefined') {
     return Buffer.from(JSON.stringify(payload)).toString('base64');
@@ -31,7 +41,6 @@ export function createMockToken(payload: any) {
   return btoa(JSON.stringify(payload));
 }
 
-// Helper to decode mock JWT
 export function decodeMockToken(token: string) {
   try {
     if (typeof window === 'undefined') {
