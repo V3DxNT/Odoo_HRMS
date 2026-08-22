@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Bell, Sparkles, User as UserIcon, Check } from 'lucide-react';
+import { Bell, User as UserIcon, Check } from 'lucide-react';
 import { NotificationRecord } from '@/lib/types';
 
 interface HeaderProps {
@@ -10,10 +10,9 @@ interface HeaderProps {
   userName?: string;
   userRole?: string;
   userAvatar?: string;
-  onOpenAi: () => void;
 }
 
-export function Header({ title, subtitle, userName, userRole, userAvatar, onOpenAi }: HeaderProps) {
+export function Header({ title, subtitle, userName, userRole, userAvatar }: HeaderProps) {
   const [notifications, setNotifications] = useState<NotificationRecord[]>([]);
   const [showNotifs, setShowNotifs] = useState(false);
 
@@ -56,15 +55,6 @@ export function Header({ title, subtitle, userName, userRole, userAvatar, onOpen
       </div>
 
       <div className="flex items-center gap-3">
-        {/* AI Assistant Button */}
-        <button
-          onClick={onOpenAi}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-accent/10 hover:bg-accent/15 text-accent text-xs font-semibold rounded-lg transition-colors border border-accent/20"
-        >
-          <Sparkles className="w-3.5 h-3.5" />
-          <span className="hidden sm:inline">AI Assistant</span>
-        </button>
-
         {/* Notifications Popover Toggle */}
         <div className="relative">
           <button
@@ -128,3 +118,4 @@ export function Header({ title, subtitle, userName, userRole, userAvatar, onOpen
     </header>
   );
 }
+

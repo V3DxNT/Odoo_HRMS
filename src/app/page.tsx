@@ -21,33 +21,80 @@ const FlowerLogo = () => (
   </svg>
 );
 
-const CompanyCarousel = () => {
-  const companies = [
-    { name: "Acme Corp", employees: "1,200+ employees", logo: "🏢", color: "from-blue-500 to-indigo-600" },
-    { name: "Stripe Logistics", employees: "4,500+ employees", logo: "💳", color: "from-[#635BFF] to-[#00D4B2]" },
-    { name: "Linear Studio", employees: "350+ employees", logo: "📐", color: "from-purple-500 to-pink-500" },
-    { name: "Vercel Labs", employees: "800+ employees", logo: "▲", color: "from-[#000000] to-[#333336]" },
-    { name: "OpenAI Systems", employees: "2,000+ employees", logo: "🧠", color: "from-[#10a37f] to-emerald-600" },
-    { name: "Figma Creative", employees: "1,500+ employees", logo: "🎨", color: "from-[#F24E1E] to-[#A259FF]" },
-    { name: "Notion HR", employees: "950+ employees", logo: "📝", color: "from-stone-700 to-stone-900" },
-    { name: "Shopify Global", employees: "10,000+ employees", logo: "🛍️", color: "from-[#96bf48] to-green-700" },
+const PeopleCarousel = () => {
+  const people = [
+    {
+      name: "Sarah Jenkins",
+      role: "HR Director",
+      department: "Human Resources",
+      avatar: "https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&q=80",
+      tag: "Verified Lead",
+      badgeColor: "bg-blue-100 text-blue-700"
+    },
+    {
+      name: "Alex Mercer",
+      role: "Sr. Software Engineer",
+      department: "Engineering",
+      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80",
+      tag: "On-Time 99%",
+      badgeColor: "bg-emerald-100 text-emerald-700"
+    },
+    {
+      name: "Elena Rodriguez",
+      role: "HR Manager",
+      department: "People Ops",
+      avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80",
+      tag: "Active HR",
+      badgeColor: "bg-purple-100 text-purple-700"
+    },
+    {
+      name: "David Lee",
+      role: "Product Designer",
+      department: "Product & Design",
+      avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80",
+      tag: "Design Lead",
+      badgeColor: "bg-orange-100 text-orange-700"
+    },
+    {
+      name: "Sophia Chen",
+      role: "Product Lead",
+      department: "Product",
+      avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80",
+      tag: "PTO Approved",
+      badgeColor: "bg-teal-100 text-teal-700"
+    },
+    {
+      name: "Marcus Vance",
+      role: "Growth Marketing",
+      department: "Marketing",
+      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80",
+      tag: "Checked In",
+      badgeColor: "bg-green-100 text-green-700"
+    }
   ];
 
   return (
     <div className="overflow-hidden whitespace-nowrap py-4 group flex relative">
-      {/* Marquee effect wrapper */}
       <div className="inline-block animate-[marquee_25s_linear_infinite] group-hover:[animation-play-state:paused] flex gap-4 pr-4">
-        {companies.concat(companies).map((c, i) => (
+        {people.concat(people).map((p, i) => (
           <div 
             key={i} 
-            className="w-56 h-20 flex-shrink-0 rounded-2xl bg-white/90 backdrop-blur-md border border-black/5 p-4 shadow-sm hover:shadow-md hover:border-black/10 transition-all flex items-center gap-3.5"
+            className="w-64 h-24 flex-shrink-0 rounded-2xl bg-white/95 backdrop-blur-md border border-black/5 p-4 shadow-sm hover:shadow-md hover:border-black/10 transition-all flex items-center gap-3.5"
           >
-            <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${c.color} text-white flex items-center justify-center text-lg font-bold shadow-sm`}>
-              {c.logo}
-            </div>
+            <img 
+              src={p.avatar} 
+              alt={p.name} 
+              className="w-12 h-12 rounded-full object-cover border-2 border-[#0071e3]/20 shadow-sm"
+            />
             <div className="text-left overflow-hidden">
-              <div className="font-bold text-sm text-[#1d1d1f] tracking-tight truncate">{c.name}</div>
-              <div className="text-[11px] font-semibold text-[#86868b] tracking-wide mt-0.5">{c.employees}</div>
+              <div className="font-bold text-sm text-[#1d1d1f] tracking-tight truncate">{p.name}</div>
+              <div className="text-xs font-medium text-[#86868b] truncate mt-0.5">{p.role}</div>
+              <div className="flex items-center gap-1.5 mt-1.5">
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${p.badgeColor}`}>
+                  {p.tag}
+                </span>
+                <span className="text-[10px] text-[#86868b] font-semibold">{p.department}</span>
+              </div>
             </div>
           </div>
         ))}
@@ -113,7 +160,7 @@ export default function Home() {
                   >
                     <Link href="#features" className="p-3 rounded-2xl hover:bg-blue-50/70 transition-colors">
                       <div className="font-bold text-sm text-[#1d1d1f]">Core Features</div>
-                      <div className="text-xs text-[#86868b]">Attendance, leave, and AI</div>
+                      <div className="text-xs text-[#86868b]">Attendance, leave, and payroll</div>
                     </Link>
                     <Link href="#workflows" className="p-3 rounded-2xl hover:bg-blue-50/70 transition-colors">
                       <div className="font-bold text-sm text-[#1d1d1f]">Workflows</div>
@@ -185,100 +232,100 @@ export default function Home() {
             </Link>
           </motion.div>
 
-          {/* Company Logos Carousel */}
+          {/* People Carousel Section */}
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 1 }}
             className="mt-20 max-w-5xl mx-auto"
           >
-            <p className="text-xs font-bold text-[#86868b] uppercase tracking-widest mb-6">Trusted by modern teams & enterprises</p>
-            <CompanyCarousel />
+            <p className="text-xs font-bold text-[#86868b] uppercase tracking-widest mb-6">Empowering team members & managers worldwide</p>
+            <PeopleCarousel />
           </motion.div>
         </section>
 
-        {/* Jira-Inspired Workflow Section */}
+        {/* Workflow Section (Enlarged Card) */}
         <section id="workflows" className="scroll-mt-32">
           <div className="text-center mb-16 max-w-3xl mx-auto">
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">Powerful workflows.<br/>Zero configuration.</h2>
             <p className="text-xl text-[#86868b]">Visualize every HR process just like your engineering boards. Track onboarding, approvals, and performance in real-time.</p>
           </div>
 
-          <div className="bento-card bg-white p-2 md:p-8 overflow-hidden relative">
-            <div className="flex flex-col md:flex-row gap-6 bg-[#f5f5f7] p-6 rounded-2xl min-h-[500px]">
+          <div className="bento-card bg-white p-6 md:p-12 overflow-hidden relative shadow-lg">
+            <div className="flex flex-col md:flex-row gap-8 bg-[#f5f5f7] p-8 rounded-3xl min-h-[580px]">
               
               {/* Column 1: Pending */}
-              <div className="flex-1 bg-white rounded-xl shadow-sm border border-black/5 p-4 flex flex-col gap-3">
+              <div className="flex-1 bg-white rounded-2xl shadow-sm border border-black/5 p-6 flex flex-col gap-4">
                 <div className="flex justify-between items-center mb-2">
-                  <h4 className="font-semibold text-[#86868b] text-sm uppercase tracking-wide">Pending Review (3)</h4>
-                  <div className="w-6 h-6 rounded-full bg-[#f5f5f7] flex items-center justify-center text-xs font-bold text-[#86868b]">+</div>
+                  <h4 className="font-bold text-[#1d1d1f] text-base tracking-wide">Pending Review (3)</h4>
+                  <div className="w-7 h-7 rounded-full bg-[#f5f5f7] flex items-center justify-center text-xs font-bold text-[#86868b]">+</div>
                 </div>
                 
-                <motion.div whileHover={{ scale: 1.02 }} className="p-4 rounded-lg border border-[#d2d2d7] bg-white cursor-pointer shadow-sm hover:shadow-md transition-shadow">
+                <motion.div whileHover={{ scale: 1.02 }} className="p-5 rounded-xl border border-[#d2d2d7] bg-white cursor-pointer shadow-sm hover:shadow-md transition-shadow">
                   <div className="flex justify-between items-start mb-3">
-                    <span className="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs font-bold rounded-md">Leave Request</span>
+                    <span className="px-2.5 py-1 bg-yellow-100 text-yellow-700 text-xs font-bold rounded-md">Leave Request</span>
                     <span className="text-xs text-[#86868b]">HR-492</span>
                   </div>
-                  <h5 className="font-semibold text-[15px] mb-1">Annual Vacation</h5>
-                  <p className="text-sm text-[#86868b] mb-4">Alex M. • 5 Days</p>
+                  <h5 className="font-bold text-base mb-1 text-[#1d1d1f]">Annual Vacation</h5>
+                  <p className="text-sm text-[#86868b] mb-4">Alex Mercer • 5 Days (Japan Trip)</p>
                   <div className="flex justify-between items-center">
-                    <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-700">AM</div>
-                    <div className="text-xs font-medium text-orange-500">Needs Approval</div>
+                    <div className="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-700">AM</div>
+                    <div className="text-xs font-bold text-orange-500 bg-orange-50 px-2.5 py-1 rounded-full border border-orange-200">Needs Approval</div>
                   </div>
                 </motion.div>
 
-                <motion.div whileHover={{ scale: 1.02 }} className="p-4 rounded-lg border border-[#d2d2d7] bg-white cursor-pointer shadow-sm hover:shadow-md transition-shadow">
+                <motion.div whileHover={{ scale: 1.02 }} className="p-5 rounded-xl border border-[#d2d2d7] bg-white cursor-pointer shadow-sm hover:shadow-md transition-shadow">
                   <div className="flex justify-between items-start mb-3">
-                    <span className="px-2 py-1 bg-purple-100 text-purple-700 text-xs font-bold rounded-md">Expense</span>
+                    <span className="px-2.5 py-1 bg-purple-100 text-purple-700 text-xs font-bold rounded-md">Expense</span>
                     <span className="text-xs text-[#86868b]">HR-491</span>
                   </div>
-                  <h5 className="font-semibold text-[15px] mb-1">Q3 Offsite Travel</h5>
-                  <p className="text-sm text-[#86868b] mb-4">Sarah J. • $450.00</p>
+                  <h5 className="font-bold text-base mb-1 text-[#1d1d1f]">Q3 Offsite Travel</h5>
+                  <p className="text-sm text-[#86868b] mb-4">Sarah Jenkins • $450.00</p>
                   <div className="flex justify-between items-center">
-                    <div className="w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center text-xs font-bold text-purple-700">SJ</div>
+                    <div className="w-7 h-7 rounded-full bg-purple-100 flex items-center justify-center text-xs font-bold text-purple-700">SJ</div>
                   </div>
                 </motion.div>
               </div>
 
               {/* Column 2: In Progress */}
-              <div className="flex-1 bg-white rounded-xl shadow-sm border border-black/5 p-4 flex flex-col gap-3">
+              <div className="flex-1 bg-white rounded-2xl shadow-sm border border-black/5 p-6 flex flex-col gap-4">
                 <div className="flex justify-between items-center mb-2">
-                  <h4 className="font-semibold text-[#86868b] text-sm uppercase tracking-wide">In Progress (1)</h4>
+                  <h4 className="font-bold text-[#1d1d1f] text-base tracking-wide">In Progress (1)</h4>
                 </div>
                 
-                <motion.div whileHover={{ scale: 1.02 }} className="p-4 rounded-lg border border-[#0071e3] bg-blue-50/30 cursor-pointer shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
-                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#0071e3]" />
+                <motion.div whileHover={{ scale: 1.02 }} className="p-5 rounded-xl border border-[#0071e3] bg-blue-50/40 cursor-pointer shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+                  <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-[#0071e3]" />
                   <div className="flex justify-between items-start mb-3">
-                    <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-md">Onboarding</span>
+                    <span className="px-2.5 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-md">Onboarding</span>
                     <span className="text-xs text-[#86868b]">HR-503</span>
                   </div>
-                  <h5 className="font-semibold text-[15px] mb-1">New Hire: Product Designer</h5>
-                  <p className="text-sm text-[#86868b] mb-4">David L. • Starts Monday</p>
+                  <h5 className="font-bold text-base mb-1 text-[#1d1d1f]">New Hire: Product Designer</h5>
+                  <p className="text-sm text-[#86868b] mb-4">David Lee • Starts Monday</p>
                   
-                  <div className="w-full bg-[#d2d2d7] rounded-full h-1.5 mb-2">
-                    <div className="bg-[#0071e3] h-1.5 rounded-full w-[60%]"></div>
+                  <div className="w-full bg-[#d2d2d7] rounded-full h-2 mb-3">
+                    <div className="bg-[#0071e3] h-2 rounded-full w-[60%]"></div>
                   </div>
                   <div className="flex justify-between items-center text-xs">
-                    <span className="text-[#86868b]">6/10 Tasks</span>
-                    <span className="font-medium text-[#0071e3]">Active</span>
+                    <span className="text-[#86868b] font-medium">6/10 Tasks Completed</span>
+                    <span className="font-bold text-[#0071e3] bg-blue-100 px-2 py-0.5 rounded">Active</span>
                   </div>
                 </motion.div>
               </div>
 
               {/* Column 3: Done */}
-              <div className="flex-1 bg-white rounded-xl shadow-sm border border-black/5 p-4 flex flex-col gap-3 opacity-70">
+              <div className="flex-1 bg-white rounded-2xl shadow-sm border border-black/5 p-6 flex flex-col gap-4 opacity-80">
                 <div className="flex justify-between items-center mb-2">
-                  <h4 className="font-semibold text-[#86868b] text-sm uppercase tracking-wide">Completed</h4>
+                  <h4 className="font-bold text-[#1d1d1f] text-base tracking-wide">Completed</h4>
                 </div>
                 
-                <div className="p-4 rounded-lg border border-[#d2d2d7] bg-[#fbfbfd]">
+                <div className="p-5 rounded-xl border border-[#d2d2d7] bg-[#fbfbfd]">
                   <div className="flex justify-between items-start mb-3">
-                    <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-md">Payroll</span>
+                    <span className="px-2.5 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-md">Payroll</span>
                     <span className="text-xs text-[#86868b]">HR-480</span>
                   </div>
-                  <h5 className="font-semibold text-[15px] mb-1 line-through text-[#86868b]">August Cycle Run</h5>
-                  <div className="flex items-center gap-2 mt-4 text-green-600 text-sm font-medium">
-                    <span>✓ Processed</span>
+                  <h5 className="font-bold text-base mb-1 line-through text-[#86868b]">August Cycle Run</h5>
+                  <div className="flex items-center gap-2 mt-4 text-green-600 text-sm font-bold">
+                    <span>✓ Processed & Verified</span>
                   </div>
                 </div>
               </div>
@@ -287,7 +334,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Enhanced Bento Grid Features */}
+        {/* Features Bento Grid */}
         <section id="features" className="scroll-mt-32">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">Everything you need.<br/>Nothing you don't.</h2>
@@ -296,7 +343,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
             
-            {/* Human/Employee Profile Card */}
+            {/* Employee Profile Card */}
             <motion.div 
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -334,31 +381,43 @@ export default function Home() {
               </div>
             </motion.div>
 
-            {/* Smart Attendance Card */}
+            {/* Smart Time Tracking Card (Visible High-Contrast Widget) */}
             <motion.div 
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="bento-card p-10 flex flex-col bg-[#1d1d1f] text-white"
+              className="bento-card p-10 flex flex-col bg-[#1d1d1f] text-white justify-between"
             >
-              <h3 className="text-2xl font-bold tracking-tight mb-2">Smart Time Tracking.</h3>
-              <p className="text-[#86868b] font-medium mb-8">IP and Geofence ready.</p>
+              <div>
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="text-2xl font-bold tracking-tight text-white">Smart Time Tracking</h3>
+                  <span className="px-2.5 py-1 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold rounded-full">
+                    ● Live Sync
+                  </span>
+                </div>
+                <p className="text-gray-400 font-medium text-sm">Automated attendance & geofencing.</p>
+              </div>
               
-              <div className="flex-1 flex flex-col items-center justify-center">
-                <div className="w-40 h-40 relative flex items-center justify-center">
+              <div className="my-6 flex flex-col items-center justify-center">
+                <div className="w-44 h-44 relative flex items-center justify-center">
                   <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="45" fill="none" stroke="#333336" strokeWidth="8" />
-                    <circle cx="50" cy="50" r="45" fill="none" stroke="#34c759" strokeWidth="8" strokeDasharray="283" strokeDashoffset="70" className="drop-shadow-[0_0_10px_rgba(52,199,89,0.5)]" />
+                    <circle cx="50" cy="50" r="42" fill="none" stroke="#333336" strokeWidth="8" />
+                    <circle cx="50" cy="50" r="42" fill="none" stroke="#34c759" strokeWidth="8" strokeDasharray="264" strokeDashoffset="24" className="drop-shadow-[0_0_12px_rgba(52,199,89,0.6)]" />
                   </svg>
-                  <div className="absolute flex flex-col items-center">
-                    <span className="text-4xl font-bold text-white tracking-tighter">7.5<span className="text-lg text-[#86868b]">h</span></span>
-                    <span className="text-xs font-semibold text-[#34c759] uppercase tracking-widest mt-1">Logged</span>
+                  <div className="absolute flex flex-col items-center text-center">
+                    <span className="text-4xl font-extrabold text-white tracking-tight drop-shadow-sm">98.4%</span>
+                    <span className="text-xs font-bold text-[#34c759] uppercase tracking-wider mt-1">On-Time Rate</span>
                   </div>
                 </div>
               </div>
+
+              <div className="p-3 bg-white/5 rounded-xl border border-white/10 flex justify-between items-center text-xs">
+                <span className="text-gray-300 font-medium">Daily Avg Logged</span>
+                <span className="font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">8.2 Hours/Day</span>
+              </div>
             </motion.div>
             
-            {/* AI Insights Card */}
+            {/* Workforce & Compliance Analytics Card */}
             <motion.div 
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -366,27 +425,39 @@ export default function Home() {
               className="md:col-span-3 bento-card p-10 flex flex-col md:flex-row items-center justify-between overflow-hidden relative bg-[#f5f5f7]"
             >
               <div className="max-w-xl relative z-10">
-                <h3 className="text-3xl font-bold tracking-tight mb-4 text-[#0071e3]">Gemini AI Intelligence.</h3>
-                <p className="text-[#1d1d1f] text-lg font-medium mb-4">Dayflow analyzes attendance patterns and summarizes leave requests automatically, saving you hours every week.</p>
-                <p className="text-[#86868b]">Automatically flags flight-risk employees based on engagement patterns and instantly drafts performance review summaries.</p>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 text-[#0071e3] text-xs font-bold mb-4">
+                  <span>📊</span> Workforce Analytics
+                </div>
+                <h3 className="text-3xl font-bold tracking-tight mb-4 text-[#1d1d1f]">Automated Workforce & Compliance.</h3>
+                <p className="text-[#86868b] text-lg font-medium mb-4">Dayflow monitors attendance trends, leave balances, and payroll schedules automatically, ensuring complete organizational alignment.</p>
+                <div className="flex flex-wrap gap-4 text-sm font-semibold text-[#1d1d1f]">
+                  <span className="flex items-center gap-1.5"><span className="text-[#0071e3]">✓</span> Instant Leave Reports</span>
+                  <span className="flex items-center gap-1.5"><span className="text-[#0071e3]">✓</span> Audit Trail Logging</span>
+                  <span className="flex items-center gap-1.5"><span className="text-[#0071e3]">✓</span> One-Click Export</span>
+                </div>
               </div>
-              <div className="w-full md:w-[500px] mt-10 md:mt-0 p-6 bg-white shadow-[0_20px_40px_rgba(0,0,0,0.08)] rounded-2xl border border-black/5 md:rotate-[-2deg] transform transition-transform hover:rotate-0">
-                 <div className="flex gap-4 mb-4">
-                   <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#0071e3] to-purple-500 flex items-center justify-center shadow-inner">
-                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              <div className="w-full md:w-[480px] mt-10 md:mt-0 p-6 bg-white shadow-[0_20px_40px_rgba(0,0,0,0.08)] rounded-2xl border border-black/5 md:rotate-[-1deg] transform transition-transform hover:rotate-0">
+                 <div className="flex items-center justify-between mb-4 border-b border-black/5 pb-3">
+                   <div className="flex items-center gap-3">
+                     <div className="w-9 h-9 rounded-xl bg-blue-50 text-[#0071e3] flex items-center justify-center font-bold text-lg">
+                       ⚡
+                     </div>
+                     <div>
+                       <div className="text-sm font-bold text-[#1d1d1f]">Compliance & Audit Digest</div>
+                       <div className="text-xs text-[#86868b]">Updated 5 mins ago</div>
+                     </div>
                    </div>
-                   <div>
-                     <div className="text-sm font-bold">AI Insight Generation</div>
-                     <div className="text-xs text-[#86868b]">Analyzing Q3 Performance</div>
-                   </div>
+                   <span className="px-2.5 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full">100% Synced</span>
                  </div>
-                 <div className="space-y-3">
-                   <div className="h-2 bg-[#f5f5f7] rounded-full w-full overflow-hidden">
-                     <div className="h-full bg-gradient-to-r from-[#0071e3] to-purple-500 w-[75%] animate-pulse" />
+                 <div className="space-y-3 text-xs">
+                   <div className="p-3 bg-[#fbfbfd] rounded-xl border border-black/5 flex justify-between items-center">
+                     <span className="font-semibold text-[#1d1d1f]">Q3 Leave Approval Rate</span>
+                     <span className="font-bold text-[#0071e3]">94.8% Approved</span>
                    </div>
-                   <p className="text-sm leading-relaxed text-[#1d1d1f] font-medium border-l-2 border-[#0071e3] pl-3 py-1">
-                     "Based on the last 3 months, the Engineering team has accumulated 450 hours of untaken PTO. Suggesting mandatory leave blocks to prevent burnout."
-                   </p>
+                   <div className="p-3 bg-[#fbfbfd] rounded-xl border border-black/5 flex justify-between items-center">
+                     <span className="font-semibold text-[#1d1d1f]">Monthly Payroll Status</span>
+                     <span className="font-bold text-green-600">✓ Audit Clean</span>
+                   </div>
                  </div>
               </div>
             </motion.div>
@@ -417,7 +488,7 @@ export default function Home() {
               <span className="font-semibold text-xl tracking-tight">Dayflow</span>
             </Link>
             <p className="text-[#86868b] max-w-sm">
-              The modern HRMS built for speed, design, and intelligence.
+              The modern HRMS built for speed, design, and simplicity.
             </p>
           </div>
           <div>
@@ -449,3 +520,4 @@ export default function Home() {
     </div>
   );
 }
+

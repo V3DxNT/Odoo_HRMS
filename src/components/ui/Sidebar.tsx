@@ -12,15 +12,13 @@ import {
   CheckSquare,
   BarChart3,
   LogOut,
-  Sparkles,
 } from 'lucide-react';
 
 interface SidebarProps {
   role: 'ADMIN' | 'EMPLOYEE';
-  onOpenAi: () => void;
 }
 
-export function Sidebar({ role, onOpenAi }: SidebarProps) {
+export function Sidebar({ role }: SidebarProps) {
   const pathname = usePathname();
 
   const employeeNav = [
@@ -65,26 +63,8 @@ export function Sidebar({ role, onOpenAi }: SidebarProps) {
         </span>
       </div>
 
-      {/* AI Assistant Quick Launcher */}
-      <div className="p-3 mx-3 my-3 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-xl">
-        <button
-          onClick={onOpenAi}
-          className="w-full flex items-center gap-2.5 text-left text-xs font-semibold text-accent hover:text-accentHover transition-colors"
-        >
-          <div className="w-6 h-6 rounded-full bg-accent text-white flex items-center justify-center shadow-xs">
-            <Sparkles className="w-3.5 h-3.5" />
-          </div>
-          <div className="flex-1">
-            <div className="text-textPrimary text-xs font-semibold flex items-center gap-1">
-              Ask Dayflow AI
-            </div>
-            <p className="text-[10px] text-textMuted font-normal">HR Policy Chatbot</p>
-          </div>
-        </button>
-      </div>
-
       {/* Main Navigation Links */}
-      <nav className="flex-1 px-3 py-2 space-y-1 overflow-y-auto">
+      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
         <div className="px-3 pb-2 text-[10px] font-semibold text-textMuted uppercase tracking-wider">
           {role === 'ADMIN' ? 'Administration' : 'Workspace'}
         </div>
@@ -122,3 +102,4 @@ export function Sidebar({ role, onOpenAi }: SidebarProps) {
     </aside>
   );
 }
+

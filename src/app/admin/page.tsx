@@ -24,9 +24,13 @@ const FlowerLogo = () => (
 
 export default function AdminDashboard() {
   const router = useRouter();
-  const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>(initialLeaveRequests);
+  const [leaveRequests, setLeaveRequests] = useState<(LeaveRequest & { rejectionReason?: string })[]>(initialLeaveRequests);
   const [filterDept, setFilterDept] = useState<string>('ALL');
   const [actionMessage, setActionMessage] = useState<string | null>(null);
+
+  // Rejection reason modal state
+  const [rejectTarget, setRejectTarget] = useState<LeaveRequest | null>(null);
+  const [rejectReasonInput, setRejectReasonInput] = useState<string>('');
 
   const handleSignOut = async () => {
     await fetch('/api/auth/sign-out', { method: 'POST' });
@@ -34,7 +38,7 @@ export default function AdminDashboard() {
   };
 
   const exportToCSV = () => {
-    const headers = ["Employee Name", "Department", "Leave Type", "Days", "Status", "Start Date", "End Date", "Reason"];
+    const headers = ["Employee Name", "Department", "Leave Type", "Days", "Status", "Start Date", "End Date", "Reason", "Rejection Reason"];
     const rows = leaveRequests.map(r => [
       `"${r.employeeName}"`,
       `"${r.department}"`,
@@ -43,7 +47,8 @@ export default function AdminDashboard() {
       `"${r.status}"`,
       `"${r.startDate}"`,
       `"${r.endDate}"`,
-      `"${r.reason.replace(/"/g, '""')}"`
+      `"${r.reason.replace(/"/g, '""')}"`,
+      `"${(r.rejectionReason || '').replace(/"/g, '""')}"`
     ]);
 
     const csvContent = [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
@@ -60,23 +65,35 @@ export default function AdminDashboard() {
     setTimeout(() => setActionMessage(null), 3500);
   };
 
-  const handleAction = async (id: string, newStatus: 'APPROVED' | 'REJECTED') => {
+  const handleAction = async (id: string, newStatus: 'APPROVED' | 'REJECTED', reason?: string) => {
     try {
       const res = await fetch(`/api/leave/${id}/approve`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ decision: newStatus })
+        body: JSON.stringify({ decision: newStatus, reason: reason || undefined })
       });
       const data = await res.json();
       if (data.success) {
-        setLeaveRequests(prev => prev.map(req => req.id === id ? { ...req, status: newStatus } : req));
+        setLeaveRequests(prev => prev.map(req => req.id === id ? { ...req, status: newStatus, rejectionReason: reason } : req));
         const req = leaveRequests.find(r => r.id === id);
-        setActionMessage(`Leave request for ${req?.employeeName} was ${newStatus.toLowerCase()}.`);
-        setTimeout(() => setActionMessage(null), 3000);
+        setActionMessage(
+          newStatus === 'APPROVED'
+            ? `✓ Leave request for ${req?.employeeName} was approved.`
+            : `✕ Leave request for ${req?.employeeName} rejected. Employee notified.`
+        );
+        setTimeout(() => setActionMessage(null), 3500);
       }
     } catch (err) {
       console.error(err);
     }
+  };
+
+  const handleConfirmRejection = () => {
+    if (!rejectTarget) return;
+    const reasonText = rejectReasonInput.trim() || 'Unspecified business requirement';
+    handleAction(rejectTarget.id, 'REJECTED', reasonText);
+    setRejectTarget(null);
+    setRejectReasonInput('');
   };
 
   const filteredRequests = filterDept === 'ALL' 
@@ -149,6 +166,68 @@ export default function AdminDashboard() {
         )}
       </AnimatePresence>
 
+      {/* Rejection Reason Modal */}
+      <AnimatePresence>
+        {rejectTarget && (
+          <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="bg-white rounded-3xl p-6 md:p-8 max-w-lg w-full shadow-2xl border border-black/10 space-y-6"
+            >
+              <div className="flex justify-between items-start">
+                <div>
+                  <span className="px-3 py-1 bg-red-100 text-red-700 text-xs font-bold rounded-full uppercase tracking-wider">
+                    Rejection Reason Required
+                  </span>
+                  <h3 className="text-xl font-bold text-[#1d1d1f] mt-2">
+                    Reject Leave Request for {rejectTarget.employeeName}
+                  </h3>
+                  <p className="text-xs text-[#86868b] mt-1 font-medium">
+                    {rejectTarget.type} • {rejectTarget.days} Day{rejectTarget.days > 1 ? 's' : ''} ({rejectTarget.startDate} to {rejectTarget.endDate})
+                  </p>
+                </div>
+                <button 
+                  onClick={() => setRejectTarget(null)}
+                  className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 font-bold"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="space-y-2">
+                <label className="block text-xs font-bold text-[#1d1d1f] uppercase tracking-wider">
+                  Reason for Rejection (sent to employee):
+                </label>
+                <textarea
+                  rows={4}
+                  value={rejectReasonInput}
+                  onChange={(e) => setRejectReasonInput(e.target.value)}
+                  placeholder="e.g. Critical project milestone scheduled during this timeframe..."
+                  className="w-full p-4 rounded-2xl border border-black/10 bg-[#fbfbfd] text-sm text-[#1d1d1f] focus:outline-none focus:ring-2 focus:ring-[#0071e3] resize-none"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-2 border-t border-black/5">
+                <button 
+                  onClick={() => setRejectTarget(null)}
+                  className="px-5 py-2.5 rounded-xl border border-black/10 text-xs font-bold text-[#86868b] hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={handleConfirmRejection}
+                  className="px-6 py-2.5 rounded-xl bg-red-600 text-white text-xs font-bold hover:bg-red-700 shadow-md shadow-red-500/20"
+                >
+                  Confirm Rejection & Notify Employee
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-6 md:p-10 space-y-8">
         
@@ -166,7 +245,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Executive Metrics Cards Grid */}
+        {/* Executive Metrics Cards Grid (All 4 cards with matching styling) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           
           {/* Total Headcount */}
@@ -184,22 +263,22 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          {/* Daily Attendance Rate with Circular Pie/Donut Chart */}
+          {/* Daily Attendance Rate with Enlarged Pie Chart */}
           <div className="bento-card p-6 bg-white flex flex-col justify-between border border-black/5 hover:border-black/10 transition-all shadow-sm">
             <div className="flex justify-between items-start">
               <span className="text-xs font-extrabold uppercase tracking-wider text-[#86868b]">Daily Attendance</span>
               <span className="p-2 rounded-xl bg-green-50 text-green-600 text-xs font-bold">⏱ 96.4%</span>
             </div>
             
-            <div className="mt-3 flex items-center justify-between gap-4">
+            <div className="mt-4 flex items-center justify-between gap-4">
               <div>
                 <div className="text-3xl font-extrabold tracking-tight text-[#1d1d1f]">{adminMetrics.attendanceRate}</div>
                 <div className="text-xs text-[#86868b] mt-1 font-semibold">{adminMetrics.presentToday} Present • {adminMetrics.onLeaveToday} Off</div>
               </div>
 
-              {/* Completion Pie Chart SVG */}
-              <div className="relative w-16 h-16 flex-shrink-0 flex items-center justify-center">
-                <svg className="w-16 h-16 transform -rotate-90" viewBox="0 0 36 36">
+              {/* Enlarged Pie Chart SVG */}
+              <div className="relative w-28 h-28 flex-shrink-0 flex items-center justify-center">
+                <svg className="w-28 h-28 transform -rotate-90" viewBox="0 0 36 36">
                   <path
                     className="text-orange-200"
                     stroke="currentColor"
@@ -217,7 +296,7 @@ export default function AdminDashboard() {
                     d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                   />
                 </svg>
-                <span className="absolute text-[11px] font-extrabold text-[#1d1d1f]">96%</span>
+                <span className="absolute text-sm font-extrabold text-[#1d1d1f]">96.4%</span>
               </div>
             </div>
           </div>
@@ -236,18 +315,18 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          {/* High-Contrast Monthly Payroll Card */}
-          <div className="bento-card p-6 bg-gradient-to-br from-[#1d1d1f] via-slate-900 to-indigo-950 text-white flex flex-col justify-between shadow-2xl border border-white/10">
+          {/* Monthly Payroll Card (Matched styling with others) */}
+          <div className="bento-card p-6 bg-white flex flex-col justify-between border border-black/5 hover:border-black/10 transition-all shadow-sm">
             <div className="flex justify-between items-start">
-              <span className="text-xs font-extrabold uppercase tracking-wider text-blue-400">Monthly Payroll Run</span>
-              <span className="px-2.5 py-1 rounded-xl bg-[#0071e3] text-white text-xs font-bold">💳 Est.</span>
+              <span className="text-xs font-extrabold uppercase tracking-wider text-[#86868b]">Monthly Payroll Run</span>
+              <span className="p-2 rounded-xl bg-blue-50 text-[#0071e3] text-xs font-bold">💳 Run</span>
             </div>
             <div className="mt-4">
-              <div className="text-3xl font-extrabold tracking-tight text-white drop-shadow-md">{adminMetrics.payrollRunThisMonth}</div>
-              <div className="w-full bg-white/20 h-2 rounded-full mt-3 overflow-hidden">
+              <div className="text-3xl font-extrabold tracking-tight text-[#1d1d1f]">{adminMetrics.payrollRunThisMonth}</div>
+              <div className="w-full bg-[#f5f5f7] h-2 rounded-full mt-3 overflow-hidden">
                 <div className="bg-[#34c759] h-full rounded-full w-[88%]" />
               </div>
-              <div className="text-xs text-emerald-400 mt-2 font-bold flex items-center gap-1.5">
+              <div className="text-xs text-green-700 mt-2 font-bold flex items-center gap-1.5">
                 <span>✓</span> Scheduled for Aug 30 • 100% Direct Deposit
               </div>
             </div>
@@ -255,7 +334,7 @@ export default function AdminDashboard() {
 
         </div>
 
-        {/* Department Workforce Visual Analytics */}
+        {/* Department Workforce Visual Analytics & Compliance Box */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
           {/* Department Headcount Breakdown Bar */}
@@ -312,50 +391,52 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          {/* Premium Flagship Gemini AI Box */}
-          <div className="bento-card p-6 bg-gradient-to-br from-[#0a0f1d] via-[#12192c] to-[#0071e3]/30 text-white flex flex-col justify-between relative overflow-hidden shadow-2xl border border-blue-500/30 group">
-            {/* Shimmer overlay */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl pointer-events-none group-hover:scale-150 transition-all duration-700" />
-            
-            <div className="space-y-4 z-10">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-[#0071e3] to-cyan-400 flex items-center justify-center text-lg shadow-lg">
-                    ✨
-                  </div>
+          {/* Clean Compliance & Workforce Audit Card (Non-AI) */}
+          <div className="bento-card p-6 bg-[#f5f5f7] border border-black/5 text-[#1d1d1f] flex flex-col justify-between shadow-sm space-y-4">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between border-b border-black/5 pb-2">
+                <div className="flex items-center gap-2">
+                  <span className="w-8 h-8 rounded-xl bg-blue-100 text-[#0071e3] flex items-center justify-center font-bold text-sm">
+                    📋
+                  </span>
                   <div>
-                    <h3 className="font-extrabold text-base tracking-tight text-white">Gemini HR Audit Intelligence</h3>
-                    <div className="text-[10px] font-bold text-blue-300 uppercase tracking-widest">Active AI Layer</div>
+                    <h3 className="font-extrabold text-base tracking-tight text-[#1d1d1f]">HR Audit & Policy Sync</h3>
+                    <div className="text-[10px] font-bold text-[#86868b] uppercase tracking-wider">Automated Verification</div>
                   </div>
                 </div>
-                <span className="px-2.5 py-1 rounded-full bg-blue-500/30 text-blue-200 text-[10px] uppercase font-extrabold tracking-wider border border-blue-400/30">
-                  Live Sync
+                <span className="px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-[10px] font-bold">
+                  Verified
                 </span>
               </div>
               
-              <p className="text-xs text-white/90 leading-relaxed pt-1 font-medium bg-white/5 p-3.5 rounded-2xl border border-white/10">
-                "Attendance consistency is up 4% in Engineering. 2 upcoming vacation requests overlap on Aug 28th. No anomalies detected in payroll logs."
-              </p>
+              <div className="space-y-2 text-xs font-medium">
+                <div className="p-3 bg-white rounded-xl border border-black/5 flex items-center justify-between">
+                  <span className="text-[#86868b]">Attendance Policy</span>
+                  <span className="font-bold text-green-600">✓ 98.4% Compliant</span>
+                </div>
+                <div className="p-3 bg-white rounded-xl border border-black/5 flex items-center justify-between">
+                  <span className="text-[#86868b]">Payroll Verification</span>
+                  <span className="font-bold text-blue-600">✓ Scheduled Aug 30</span>
+                </div>
+              </div>
             </div>
 
-            <div className="pt-4 z-10 space-y-2">
-              <button 
-                onClick={() => setActionMessage("✓ Gemini AI Full Audit completed: No policy anomalies detected.")}
-                className="w-full py-3 rounded-2xl bg-gradient-to-r from-[#0071e3] to-blue-500 text-white text-xs font-extrabold hover:brightness-110 transition-all shadow-lg shadow-blue-500/30"
-              >
-                Run Gemini AI Audit Digest
-              </button>
-            </div>
+            <button 
+              onClick={() => setActionMessage("✓ System Audit complete: All employee leave and payroll records in sync.")}
+              className="w-full py-3 rounded-2xl bg-[#0071e3] text-white text-xs font-extrabold hover:bg-[#0077ED] transition-all shadow-md"
+            >
+              Run Policy & Audit Verification
+            </button>
           </div>
 
         </div>
 
-        {/* Leave Requests Management Section */}
-        <div className="bento-card p-6 bg-white space-y-6 border border-black/5 shadow-sm">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/5 pb-4">
+        {/* Leave Requests Management Section (Enlarged Card) */}
+        <div className="bento-card p-8 bg-white space-y-6 border border-black/5 shadow-md rounded-3xl">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/5 pb-5">
             <div>
-              <h2 className="text-xl font-bold tracking-tight text-[#1d1d1f]">Leave Approvals Workflow</h2>
-              <p className="text-xs text-[#86868b]">Review employee time-off applications with live AI remarks summary.</p>
+              <h2 className="text-2xl font-bold tracking-tight text-[#1d1d1f]">Leave Approvals Workflow</h2>
+              <p className="text-sm text-[#86868b]">Review employee time-off applications with detailed rejection reasons & automatic notifications.</p>
             </div>
             
             {/* Department Filter Tabs */}
@@ -364,7 +445,7 @@ export default function AdminDashboard() {
                 <button
                   key={dept}
                   onClick={() => setFilterDept(dept)}
-                  className={`px-3.5 py-1.5 text-xs font-bold rounded-xl transition-all ${
+                  className={`px-4 py-2 text-xs font-bold rounded-xl transition-all ${
                     filterDept === dept 
                       ? 'bg-white text-[#1d1d1f] shadow-sm' 
                       : 'text-[#86868b] hover:text-[#1d1d1f]'
@@ -378,26 +459,34 @@ export default function AdminDashboard() {
 
           <div className="space-y-4">
             {filteredRequests.length === 0 ? (
-              <div className="text-center py-10 text-[#86868b] text-sm">No leave requests found for this filter.</div>
+              <div className="text-center py-12 text-[#86868b] text-sm">No leave requests found for this filter.</div>
             ) : (
               filteredRequests.map((req) => (
                 <motion.div 
                   key={req.id}
                   layout
-                  className="p-5 rounded-2xl border border-black/5 bg-[#fbfbfd] hover:border-black/10 hover:bg-white transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm"
+                  className="p-6 rounded-2xl border border-black/5 bg-[#fbfbfd] hover:border-black/10 hover:bg-white transition-all flex flex-col md:flex-row md:items-center justify-between gap-5 shadow-sm"
                 >
-                  <div className="flex items-center gap-4">
-                    <img src={req.employeeAvatar} alt={req.employeeName} className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm" />
+                  <div className="flex items-start md:items-center gap-4">
+                    <img src={req.employeeAvatar} alt={req.employeeName} className="w-14 h-14 rounded-full object-cover border-2 border-white shadow-sm flex-shrink-0" />
                     <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-base text-[#1d1d1f]">{req.employeeName}</span>
-                        <span className="px-2.5 py-0.5 bg-gray-200 text-gray-800 text-[10px] font-bold rounded-full">{req.department}</span>
+                      <div className="flex items-center gap-2.5">
+                        <span className="font-bold text-lg text-[#1d1d1f]">{req.employeeName}</span>
+                        <span className="px-3 py-0.5 bg-gray-200 text-gray-800 text-xs font-bold rounded-full">{req.department}</span>
                         <span className="text-xs text-[#86868b]">• {req.submittedAt}</span>
                       </div>
-                      <div className="text-sm font-bold text-[#0071e3] mt-0.5">
+                      <div className="text-base font-bold text-[#0071e3] mt-1">
                         {req.type} — {req.days} Day{req.days > 1 ? 's' : ''} ({req.startDate} to {req.endDate})
                       </div>
-                      <p className="text-xs text-[#86868b] mt-1 font-medium italic">"{req.reason}"</p>
+                      <p className="text-sm text-[#86868b] mt-1 font-medium italic">"{req.reason}"</p>
+                      
+                      {/* Display Rejection Reason if Rejected */}
+                      {req.status === 'REJECTED' && req.rejectionReason && (
+                        <div className="mt-2.5 p-3 rounded-xl bg-red-50 border border-red-100 text-xs text-red-800 font-semibold">
+                          <span className="font-bold uppercase tracking-wider text-red-600">Rejection Reason: </span>
+                          "{req.rejectionReason}"
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -406,19 +495,22 @@ export default function AdminDashboard() {
                       <>
                         <button 
                           onClick={() => handleAction(req.id, 'APPROVED')}
-                          className="px-5 py-2.5 bg-[#34c759] text-white text-xs font-bold rounded-xl hover:bg-green-600 transition-colors shadow-sm"
+                          className="px-6 py-3 bg-[#34c759] text-white text-xs font-bold rounded-xl hover:bg-green-600 transition-colors shadow-sm"
                         >
                           Approve Request
                         </button>
                         <button 
-                          onClick={() => handleAction(req.id, 'REJECTED')}
-                          className="px-4 py-2.5 bg-red-50 text-red-600 text-xs font-bold rounded-xl hover:bg-red-100 transition-colors border border-red-100"
+                          onClick={() => {
+                            setRejectTarget(req);
+                            setRejectReasonInput('');
+                          }}
+                          className="px-5 py-3 bg-red-50 text-red-600 text-xs font-bold rounded-xl hover:bg-red-100 transition-colors border border-red-200"
                         >
-                          Reject
+                          Reject Request...
                         </button>
                       </>
                     ) : (
-                      <span className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider ${
+                      <span className={`px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider ${
                         req.status === 'APPROVED' ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-red-100 text-red-700 border border-red-200'
                       }`}>
                         {req.status}
@@ -435,3 +527,4 @@ export default function AdminDashboard() {
     </div>
   );
 }
+
