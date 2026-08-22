@@ -6,7 +6,7 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
   // Define protected paths
-  const isDashboardRoute = pathname.startsWith('/admin') || pathname.startsWith('/employee');
+  const isDashboardRoute = pathname.startsWith('/hr') || pathname.startsWith('/employee');
   const isApiRoute = pathname.startsWith('/api') && !pathname.startsWith('/api/auth');
 
   if (isDashboardRoute || isApiRoute) {
@@ -26,12 +26,12 @@ export function middleware(request: NextRequest) {
     }
 
     // Role-based routing enforcement for dashboard pages
-    if (pathname.startsWith('/admin') && payload.role !== 'ADMIN') {
+    if (pathname.startsWith('/hr') && payload.role !== 'HR') {
       return NextResponse.redirect(new URL('/employee', request.url));
     }
     
     if (pathname.startsWith('/employee') && payload.role !== 'EMPLOYEE') {
-      return NextResponse.redirect(new URL('/admin', request.url));
+      return NextResponse.redirect(new URL('/hr', request.url));
     }
   }
 

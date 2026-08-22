@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 
 interface SidebarProps {
-  role: 'ADMIN' | 'EMPLOYEE';
+  role: 'HR' | 'EMPLOYEE';
 }
 
 export function Sidebar({ role }: SidebarProps) {
@@ -29,16 +29,16 @@ export function Sidebar({ role }: SidebarProps) {
     { label: 'Payslips', href: '/employee/payslips', icon: FileSpreadsheet },
   ];
 
-  const adminNav = [
-    { label: 'Overview', href: '/admin', icon: LayoutDashboard },
-    { label: 'Employee Directory', href: '/admin/employees', icon: Users },
-    { label: 'Company Attendance', href: '/admin/attendance', icon: CalendarCheck },
-    { label: 'Leave Approvals', href: '/admin/leave-approvals', icon: CheckSquare },
-    { label: 'Payroll & Compensation', href: '/admin/payroll', icon: FileSpreadsheet },
-    { label: 'Reports & Analytics', href: '/admin/reports', icon: BarChart3 },
+  const hrNav = [
+    { label: 'Overview', href: '/hr', icon: LayoutDashboard },
+    { label: 'Employee Directory', href: '/hr/employees', icon: Users },
+    { label: 'Company Attendance', href: '/hr/attendance', icon: CalendarCheck },
+    { label: 'Leave Approvals', href: '/hr/leave-approvals', icon: CheckSquare },
+    { label: 'Payroll & Compensation', href: '/hr/payroll', icon: FileSpreadsheet },
+    { label: 'Reports & Analytics', href: '/hr/reports', icon: BarChart3 },
   ];
 
-  const navItems = role === 'ADMIN' ? adminNav : employeeNav;
+  const navItems = role === 'HR' ? hrNav : employeeNav;
 
   const handleLogout = async () => {
     await fetch('/api/auth/sign-out', { method: 'POST' });
@@ -66,7 +66,7 @@ export function Sidebar({ role }: SidebarProps) {
       {/* Main Navigation Links */}
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
         <div className="px-3 pb-2 text-[10px] font-semibold text-textMuted uppercase tracking-wider">
-          {role === 'ADMIN' ? 'Administration' : 'Workspace'}
+          {role === 'HR' ? 'HR Management' : 'Workspace'}
         </div>
         {navItems.map((item) => {
           const Icon = item.icon;

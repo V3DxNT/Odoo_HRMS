@@ -23,7 +23,7 @@ export function RoleSwitcher() {
     fetchUser();
   }, []);
 
-  const handleSwitch = async (targetRole: 'ADMIN' | 'EMPLOYEE') => {
+  const handleSwitch = async (targetRole: 'HR' | 'EMPLOYEE') => {
     setLoading(true);
     try {
       const res = await fetch('/api/auth/demo-login', {
@@ -34,8 +34,8 @@ export function RoleSwitcher() {
       const data = await res.json();
       if (data.success) {
         setCurrentUser(data.user);
-        if (targetRole === 'ADMIN') {
-          router.push('/admin');
+        if (targetRole === 'HR') {
+          router.push('/hr');
         } else {
           router.push('/employee');
         }
@@ -49,7 +49,7 @@ export function RoleSwitcher() {
   };
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 flex items-center gap-1.5 p-1.5 bg-textPrimary text-white rounded-full shadow-2xl border border-white/20 text-xs font-medium backdrop-blur-md">
+    <div className="fixed bottom-4 right-4 z-50 flex items-center gap-1.5 p-1.5 bg-[#1d1d1f] text-white rounded-full shadow-2xl border border-white/20 text-xs font-medium backdrop-blur-md">
       <div className="px-2.5 py-1 text-[11px] text-zinc-400 border-r border-zinc-700/60 hidden sm:block">
         Demo Persona: <span className="text-white font-semibold">{currentUser?.fullName || 'Guest'}</span> ({currentUser?.role || 'None'})
       </div>
@@ -59,7 +59,7 @@ export function RoleSwitcher() {
         disabled={loading}
         className={`flex items-center gap-1 px-3 py-1.5 rounded-full transition-all ${
           currentUser?.role === 'EMPLOYEE'
-            ? 'bg-accent text-white font-semibold shadow-sm'
+            ? 'bg-[#0071e3] text-white font-semibold shadow-sm'
             : 'text-zinc-300 hover:text-white hover:bg-zinc-800'
         }`}
       >
@@ -68,16 +68,16 @@ export function RoleSwitcher() {
       </button>
 
       <button
-        onClick={() => handleSwitch('ADMIN')}
+        onClick={() => handleSwitch('HR')}
         disabled={loading}
         className={`flex items-center gap-1 px-3 py-1.5 rounded-full transition-all ${
-          currentUser?.role === 'ADMIN'
-            ? 'bg-accent text-white font-semibold shadow-sm'
+          currentUser?.role === 'HR'
+            ? 'bg-[#0071e3] text-white font-semibold shadow-sm'
             : 'text-zinc-300 hover:text-white hover:bg-zinc-800'
         }`}
       >
         <ShieldCheck className="w-3.5 h-3.5" />
-        <span>Priya (HR Admin)</span>
+        <span>Sarah (HR Manager)</span>
       </button>
 
       {loading && <RefreshCw className="w-3.5 h-3.5 animate-spin text-zinc-400 mr-1" />}

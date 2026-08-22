@@ -24,9 +24,9 @@ const FlowerLogo = () => (
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [mounted, setMounted] = useState(false);
-  const [email, setEmail] = useState('admin@company.com');
+  const [email, setEmail] = useState('hr@company.com');
   const [password, setPassword] = useState('password123');
-  const [registerRole, setRegisterRole] = useState<'HR' | 'EMPLOYEE' | 'ADMIN'>('HR');
+  const [registerRole, setRegisterRole] = useState<'HR' | 'EMPLOYEE'>('HR');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   
@@ -56,8 +56,8 @@ export default function AuthPage() {
       if (!res.ok) {
         setError(data.error || 'Failed to sign in');
       } else {
-        // Full page navigation ensures middleware & cookies sync cleanly
-        window.location.href = data.user.role === 'ADMIN' ? '/admin' : '/employee';
+        // Redirect HR to /hr and Employee to /employee
+        window.location.href = data.user.role === 'HR' ? '/hr' : '/employee';
       }
     } catch (err) {
       setError('An error occurred. Please try again.');
@@ -84,10 +84,10 @@ export default function AuthPage() {
       
       <Link href="/" className="absolute top-8 left-8 flex items-center gap-2 text-[#1d1d1f] hover:opacity-80 transition-opacity z-50">
         <FlowerLogo />
-        <span className="font-semibold tracking-tight">Dayflow</span>
+        <span className="font-bold text-xl tracking-tight">Dayflow</span>
       </Link>
 
-      <div className="relative w-full max-w-5xl h-[720px] bg-white rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.08)] border border-black/5 overflow-hidden flex">
+      <div className="relative w-full max-w-5xl h-[700px] bg-white rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.08)] border border-black/5 overflow-hidden flex">
         
         {/* Register Container (Left) */}
         <div className={`absolute top-0 left-0 h-full w-1/2 flex flex-col justify-center px-12 transition-all duration-700 ease-in-out ${isLogin ? 'opacity-0 z-10 translate-x-10 pointer-events-none' : 'opacity-100 z-20 translate-x-0'}`}>
@@ -111,44 +111,33 @@ export default function AuthPage() {
               <input type="email" required className="w-full px-4 py-2.5 bg-[#f5f5f7] border border-transparent rounded-xl focus:outline-none focus:bg-white focus:border-[#0071e3] transition-all text-sm" placeholder="name@company.com" />
             </div>
 
-            {/* Select Role Option: HR, Employee, or Admin */}
+            {/* Select Role Option: HR or Employee */}
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-[#86868b] mb-1.5">
                 Select Account Role
               </label>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
                   onClick={() => setRegisterRole('HR')}
-                  className={`py-2.5 px-2 rounded-xl border text-xs font-bold transition-all flex items-center justify-center gap-1 ${
+                  className={`py-3 px-4 rounded-xl border text-sm font-bold transition-all flex items-center justify-center gap-2 ${
                     registerRole === 'HR'
                       ? 'bg-[#0071e3] text-white border-[#0071e3] shadow-md'
                       : 'bg-[#f5f5f7] text-[#1d1d1f] border-black/5 hover:bg-gray-200'
                   }`}
                 >
-                  🏢 HR
+                  🏢 HR Manager
                 </button>
                 <button
                   type="button"
                   onClick={() => setRegisterRole('EMPLOYEE')}
-                  className={`py-2.5 px-2 rounded-xl border text-xs font-bold transition-all flex items-center justify-center gap-1 ${
+                  className={`py-3 px-4 rounded-xl border text-sm font-bold transition-all flex items-center justify-center gap-2 ${
                     registerRole === 'EMPLOYEE'
                       ? 'bg-[#0071e3] text-white border-[#0071e3] shadow-md'
                       : 'bg-[#f5f5f7] text-[#1d1d1f] border-black/5 hover:bg-gray-200'
                   }`}
                 >
                   👤 Employee
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setRegisterRole('ADMIN')}
-                  className={`py-2.5 px-2 rounded-xl border text-xs font-bold transition-all flex items-center justify-center gap-1 ${
-                    registerRole === 'ADMIN'
-                      ? 'bg-[#0071e3] text-white border-[#0071e3] shadow-md'
-                      : 'bg-[#f5f5f7] text-[#1d1d1f] border-black/5 hover:bg-gray-200'
-                  }`}
-                >
-                  🔑 Admin
                 </button>
               </div>
             </div>
@@ -164,12 +153,12 @@ export default function AuthPage() {
                 if (registerRole === 'EMPLOYEE') {
                   window.location.href = '/employee';
                 } else {
-                  window.location.href = `/onboarding?role=${registerRole}`;
+                  window.location.href = `/hr`;
                 }
               }}
               className="w-full mt-2 py-3.5 rounded-xl bg-[#0071e3] text-white font-semibold text-base hover:bg-[#0077ED] transition-colors shadow-[0_4px_12px_rgba(0,113,227,0.3)]"
             >
-              Create Account as {registerRole === 'HR' ? 'HR Manager' : registerRole === 'EMPLOYEE' ? 'Employee' : 'Admin'}
+              Create Account as {registerRole === 'HR' ? 'HR Manager' : 'Employee'}
             </button>
           </div>
           
@@ -190,27 +179,20 @@ export default function AuthPage() {
           )}
 
           {/* Quick Demo Login Preset Buttons */}
-          <div className="mb-6 p-3 bg-[#f5f5f7] rounded-2xl border border-black/5">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#86868b] block mb-2">⚡ One-Tap Login:</span>
-            <div className="flex gap-2">
-              <button 
-                type="button"
-                onClick={() => handleQuickSelect('admin@company.com', 'password123')}
-                className="flex-1 py-2 px-2 bg-white text-xs font-bold text-[#1d1d1f] rounded-xl shadow-sm hover:bg-blue-50 hover:text-[#0071e3] transition-all border border-black/5"
-              >
-                🔑 Admin
-              </button>
+          <div className="mb-6 p-3.5 bg-[#f5f5f7] rounded-2xl border border-black/5">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#86868b] block mb-2.5">⚡ Quick One-Tap Sign In:</span>
+            <div className="grid grid-cols-2 gap-3">
               <button 
                 type="button"
                 onClick={() => handleQuickSelect('hr@company.com', 'password123')}
-                className="flex-1 py-2 px-2 bg-white text-xs font-bold text-[#1d1d1f] rounded-xl shadow-sm hover:bg-blue-50 hover:text-[#0071e3] transition-all border border-black/5"
+                className="py-2.5 px-3 bg-white text-xs font-bold text-[#1d1d1f] rounded-xl shadow-sm hover:bg-blue-50 hover:text-[#0071e3] transition-all border border-black/5 flex items-center justify-center gap-1.5"
               >
                 🏢 HR Manager
               </button>
               <button 
                 type="button"
                 onClick={() => handleQuickSelect('employee@company.com', 'password123')}
-                className="flex-1 py-2 px-2 bg-white text-xs font-bold text-[#1d1d1f] rounded-xl shadow-sm hover:bg-blue-50 hover:text-[#0071e3] transition-all border border-black/5"
+                className="py-2.5 px-3 bg-white text-xs font-bold text-[#1d1d1f] rounded-xl shadow-sm hover:bg-blue-50 hover:text-[#0071e3] transition-all border border-black/5 flex items-center justify-center gap-1.5"
               >
                 👤 Employee
               </button>

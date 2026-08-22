@@ -1,25 +1,14 @@
 export const mockUsers = [
   {
-    id: "user_admin_1",
+    id: "user_hr_1",
     firstName: "Sarah",
     lastName: "Jenkins",
-    email: "admin@company.com",
-    password: "password123",
-    role: "ADMIN",
-    department: "HR",
-    designation: "HR Director & Administrator",
-    avatar: "https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&q=80"
-  },
-  {
-    id: "user_hr_1",
-    firstName: "Elena",
-    lastName: "Rodriguez",
     email: "hr@company.com",
     password: "password123",
-    role: "ADMIN",
+    role: "HR",
     department: "HR",
-    designation: "HR Manager",
-    avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=100&q=80"
+    designation: "HR Director & Manager",
+    avatar: "https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&q=80"
   },
   {
     id: "user_emp_1",

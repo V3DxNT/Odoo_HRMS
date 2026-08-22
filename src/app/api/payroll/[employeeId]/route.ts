@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getSessionUser, requireAdmin } from '@/lib/auth/rbac';
+import { getSessionUser, requireHR } from '@/lib/auth/rbac';
 import { db } from '@/lib/db';
 
 export async function GET(req: Request, { params }: { params: { employeeId: string } }) {
@@ -22,20 +22,28 @@ export async function GET(req: Request, { params }: { params: { employeeId: stri
   }
 }
 
-export async function PATCH(req: Request, { params }: { params: { employeeId: string } }) {
+export async function PUT(req: Request, { params }: { params: { employeeId: string } }) {
   try {
-    const admin = requireAdmin();
+    const hrUser = requireHR();
     const { baseSalary, allowances, deductions } = await req.json();
 
-    const payroll = db.updatePayroll(
+    const updated = db.updatePayroll(
       params.employeeId,
-      admin.userId,
-      Number(baseSalary),
+      hrUser.userId,
+      Number(baseSalary || 0),
       Number(allowances || 0),
       Number(deductions || 0)
     );
 
-    return NextResponse.json({ success: true, payroll });
+    db.createAuditLog(
+      hrUser.userId,
+      hrUser.fullName,
+      'UPDATE_PAYROLL',
+      'PAYROLL',
+      params.employeeId,
+      `Payroll updated for employee ${params.employeeId}`
+    );
+    return NextResponse.json({ success: true, payroll: updated });
   } catch (error: any) {
     return NextResponse.json({ error: { message: error.message } }, { status: 500 });
   }

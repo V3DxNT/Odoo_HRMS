@@ -162,15 +162,19 @@ export default function EmployeeDashboard() {
   return (
     <div className="min-h-screen bg-[#fbfbfd] text-[#1d1d1f] flex flex-col font-sans">
       
-      {/* Enlarged Floating Navbar */}
-      <header className="sticky top-0 z-40 glass border-b border-black/10 px-8 py-5 flex items-center justify-between shadow-sm">
-        <div className="flex items-center gap-4">
-          <div className="p-2 bg-[#0071e3] text-white rounded-2xl shadow-md flex items-center justify-center">
+      {/* Bold Styled Premium Navbar */}
+      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-2xl border-b border-black/10 px-8 py-4 flex items-center justify-between shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
+        <div className="flex items-center gap-3.5">
+          <div className="p-2.5 bg-[#0071e3] text-white rounded-2xl shadow-md flex items-center justify-center">
             <FlowerLogo />
           </div>
           <div>
-            <span className="font-extrabold text-xl tracking-tight text-[#1d1d1f] block leading-tight">Dayflow</span>
-            <span className="text-xs text-[#0071e3] font-extrabold uppercase tracking-wider">Employee Hub & Self-Service</span>
+            <span className="font-black text-2xl tracking-tighter bg-gradient-to-r from-[#1d1d1f] via-[#0071e3] to-[#1d1d1f] bg-clip-text text-transparent block leading-tight font-sans">
+              Dayflow
+            </span>
+            <span className="text-[11px] text-[#0071e3] font-black uppercase tracking-widest bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-100/60 inline-block mt-0.5">
+              Employee Hub
+            </span>
           </div>
         </div>
 

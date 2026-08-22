@@ -173,12 +173,12 @@ class DatabaseStore {
 
     this.leaves.unshift(newLeave);
 
-    // Notify Admins
-    const admins = this.users.filter((u) => u.role === 'ADMIN');
-    admins.forEach((admin) => {
+    // Notify HR Managers
+    const hrs = this.users.filter((u) => u.role === 'HR');
+    hrs.forEach((hr) => {
       this.notifications.unshift({
         id: `notif_${Date.now()}_${Math.random()}`,
-        userId: admin.id,
+        userId: hr.id,
         title: 'New Leave Request',
         message: `${newLeave.userName} requested ${newLeave.daysCount} days of ${newLeave.type} leave.`,
         read: false,

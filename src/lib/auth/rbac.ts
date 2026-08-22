@@ -15,10 +15,10 @@ export function requireAuth(): JwtPayload {
   return user;
 }
 
-export function requireAdmin(): JwtPayload {
+export function requireHR(): JwtPayload {
   const user = requireAuth();
-  if (user.role !== 'ADMIN') {
-    throw new Error('Forbidden: Admin access required');
+  if (user.role !== 'HR') {
+    throw new Error('Forbidden: HR access required');
   }
   return user;
 }

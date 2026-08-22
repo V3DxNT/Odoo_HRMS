@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getSessionUser, requireAdmin } from '@/lib/auth/rbac';
+import { getSessionUser, requireHR } from '@/lib/auth/rbac';
 import { db } from '@/lib/db';
 
 export async function GET() {
@@ -18,7 +18,7 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const admin = requireAdmin();
+    const hrUser = requireHR();
     const { email, fullName, department, designation, role } = await req.json();
 
     if (!email || !fullName) {
@@ -55,8 +55,8 @@ export async function POST(req: Request) {
     });
 
     db.createAuditLog(
-      admin.userId,
-      admin.fullName,
+      hrUser.userId,
+      hrUser.fullName,
       'EMPLOYEE_INVITED',
       'User',
       newId,

@@ -35,7 +35,7 @@ export default function OnboardingPage() {
   const prevStep = () => setStep(s => Math.max(s - 1, 1));
 
   const handleFinish = () => {
-    router.push('/admin');
+    router.push('/hr');
   };
 
   return (

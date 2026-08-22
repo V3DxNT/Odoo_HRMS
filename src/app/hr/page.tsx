@@ -22,7 +22,7 @@ const FlowerLogo = () => (
   </svg>
 );
 
-export default function AdminDashboard() {
+export default function HRDashboard() {
   const router = useRouter();
   const [leaveRequests, setLeaveRequests] = useState<(LeaveRequest & { rejectionReason?: string })[]>(initialLeaveRequests);
   const [filterDept, setFilterDept] = useState<string>('ALL');
@@ -105,15 +105,19 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-[#fbfbfd] text-[#1d1d1f] flex flex-col font-sans">
       
-      {/* Enlarged Floating Navbar */}
-      <header className="sticky top-0 z-40 glass border-b border-black/10 px-8 py-5 flex items-center justify-between shadow-sm">
-        <div className="flex items-center gap-4">
-          <div className="p-2 bg-[#1d1d1f] text-white rounded-2xl shadow-md flex items-center justify-center">
+      {/* Bold Styled Premium Navbar */}
+      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-2xl border-b border-black/10 px-8 py-4 flex items-center justify-between shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
+        <div className="flex items-center gap-3.5">
+          <div className="p-2.5 bg-[#0071e3] text-white rounded-2xl shadow-md flex items-center justify-center">
             <FlowerLogo />
           </div>
           <div>
-            <span className="font-extrabold text-xl tracking-tight text-[#1d1d1f] block leading-tight">Dayflow</span>
-            <span className="text-xs text-[#0071e3] font-extrabold uppercase tracking-wider">Admin & HR Management Portal</span>
+            <span className="font-black text-2xl tracking-tighter bg-gradient-to-r from-[#1d1d1f] via-[#0071e3] to-[#1d1d1f] bg-clip-text text-transparent block leading-tight font-sans">
+              Dayflow
+            </span>
+            <span className="text-[11px] text-[#0071e3] font-black uppercase tracking-widest bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-100/60 inline-block mt-0.5">
+              HR Portal
+            </span>
           </div>
         </div>
 
@@ -132,7 +136,7 @@ export default function AdminDashboard() {
           >
             <img 
               src="https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&q=80" 
-              alt="Admin Avatar" 
+              alt="HR Avatar" 
               className="w-11 h-11 rounded-full object-cover border-2 border-[#0071e3] shadow-sm"
             />
             <div className="hidden sm:block text-left">
@@ -234,7 +238,7 @@ export default function AdminDashboard() {
         {/* Header & Welcome */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-[#1d1d1f]">Executive Overview</h1>
+            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-[#1d1d1f]">HR Executive Overview</h1>
             <p className="text-[#86868b] text-base font-medium mt-1">Real-time statistics, department analytics, and workflow approvals.</p>
           </div>
           <div className="flex items-center gap-2">
@@ -245,7 +249,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Executive Metrics Cards Grid (All 4 cards with matching styling) */}
+        {/* Executive Metrics Cards Grid (Matching styling) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           
           {/* Total Headcount */}
@@ -315,7 +319,7 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          {/* Monthly Payroll Card (Matched styling with others) */}
+          {/* Monthly Payroll Card */}
           <div className="bento-card p-6 bg-white flex flex-col justify-between border border-black/5 hover:border-black/10 transition-all shadow-sm">
             <div className="flex justify-between items-start">
               <span className="text-xs font-extrabold uppercase tracking-wider text-[#86868b]">Monthly Payroll Run</span>
@@ -391,7 +395,7 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          {/* Clean Compliance & Workforce Audit Card (Non-AI) */}
+          {/* Clean Compliance & Workforce Audit Card */}
           <div className="bento-card p-6 bg-[#f5f5f7] border border-black/5 text-[#1d1d1f] flex flex-col justify-between shadow-sm space-y-4">
             <div className="space-y-3">
               <div className="flex items-center justify-between border-b border-black/5 pb-2">
@@ -431,7 +435,7 @@ export default function AdminDashboard() {
 
         </div>
 
-        {/* Leave Requests Management Section (Enlarged Card) */}
+        {/* Leave Requests Management Section */}
         <div className="bento-card p-8 bg-white space-y-6 border border-black/5 shadow-md rounded-3xl">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/5 pb-5">
             <div>
@@ -527,4 +531,3 @@ export default function AdminDashboard() {
     </div>
   );
 }
-

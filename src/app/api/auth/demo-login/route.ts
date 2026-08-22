@@ -5,9 +5,9 @@ import { setAuthCookie } from '@/lib/auth/cookies';
 
 export async function POST(req: Request) {
   try {
-    const { role } = await req.json(); // 'ADMIN' or 'EMPLOYEE'
+    const { role } = await req.json(); // 'HR' or 'EMPLOYEE'
 
-    const targetEmail = role === 'ADMIN' ? 'priya@dayflow.hr' : 'arjun@dayflow.hr';
+    const targetEmail = role === 'HR' ? 'priya@dayflow.hr' : 'arjun@dayflow.hr';
     const user = db.getUserByEmail(targetEmail);
 
     if (!user) {
